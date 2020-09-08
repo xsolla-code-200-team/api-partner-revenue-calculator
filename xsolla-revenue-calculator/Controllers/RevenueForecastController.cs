@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
@@ -17,8 +18,13 @@ namespace xsolla_revenue_calculator.Controllers
         {
             _userLoggingService = userLoggingService;
         }
-
+        /// <summary>
+        /// Method to post user information to the service
+        /// </summary>
+        /// <param name="userInfoRequestBody">user model</param>
+        /// <response code="200">Returns in case of success</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UserInfo>> PostUserInfo([FromBody] UserInfoRequestBody userInfoRequestBody)
         {
             var user = _userLoggingService.LogUser(userInfoRequestBody);
