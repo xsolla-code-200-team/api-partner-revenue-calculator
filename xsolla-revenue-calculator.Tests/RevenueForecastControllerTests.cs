@@ -22,6 +22,7 @@ namespace xsolla_revenue_calculator.Tests
             mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoRequestBody>()))
                 .ReturnsAsync(new UserInfo());
             var mockModelControllerService = new Mock<IModelController>();
+            mockModelControllerService.Setup(service => service.Publish(It.IsAny<string>()));
             var controller = new RevenueForecastController(mockLoggingService.Object, mockModelControllerService.Object);
             // Act
             var requestBody = new UserInfoRequestBody

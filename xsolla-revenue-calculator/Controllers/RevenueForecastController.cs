@@ -32,7 +32,7 @@ namespace xsolla_revenue_calculator.Controllers
         {
             var user = _userLoggingService.LogUserAsync(userInfoRequestBody);
             _modelController.Publish((await user).Email);
-            return Ok(user);
+            return Ok(await user);
         }
     }
 }
