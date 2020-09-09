@@ -6,6 +6,6 @@ namespace xsolla_revenue_calculator.Services.UserLoggingService
 {
     public interface IUserLoggingService
     {
-        Task<UserInfo> LogUser(UserInfoRequestBody userInfoRequestBody);
+        Task<UserInfo> LogUserAsync(UserInfoRequestBody userInfoRequestBody);
     }
 }

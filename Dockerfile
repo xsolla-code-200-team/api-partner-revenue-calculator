@@ -2,9 +2,17 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY *.sln .
 COPY xsolla-revenue-calculator/*.csproj xsolla-revenue-calculator/
+COPY xsolla-revenue-calculator.Tests/*.csproj xsolla-revenue-calculator.Tests/
 
 RUN dotnet restore
 COPY . .
+
+# testing
+FROM build AS testing
+WORKDIR /src/xsolla-revenue-calculator
+RUN dotnet build
+WORKDIR /src/xsolla-revenue-calculator.Tests
+RUN dotnet test
 
 # publish
 FROM build AS publish

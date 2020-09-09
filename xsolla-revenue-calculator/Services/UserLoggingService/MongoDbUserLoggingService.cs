@@ -30,7 +30,7 @@ namespace xsolla_revenue_calculator.Services.UserLoggingService
             _client = new MongoClient(connectionString);
         }
 
-        public async Task<UserInfo> LogUser(UserInfoRequestBody userInfoRequestBody)
+        public async Task<UserInfo> LogUserAsync(UserInfoRequestBody userInfoRequestBody)
         {
             var collection = _database.GetCollection<UserInfo>("users");
             var userInfo = _mapper.Map<UserInfo>(userInfoRequestBody);

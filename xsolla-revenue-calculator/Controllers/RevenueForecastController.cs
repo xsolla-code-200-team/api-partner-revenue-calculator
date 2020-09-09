@@ -25,9 +25,9 @@ namespace xsolla_revenue_calculator.Controllers
         /// <response code="200">Returns in case of success</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserInfo>> PostUserInfo([FromBody] UserInfoRequestBody userInfoRequestBody)
+        public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfoRequestBody userInfoRequestBody)
         {
-            var user = _userLoggingService.LogUser(userInfoRequestBody);
+            var user = _userLoggingService.LogUserAsync(userInfoRequestBody);
             return Ok(await user);
         }
     }

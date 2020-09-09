@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xsolla-revenue-calculator", "xsolla-revenue-calculator\xsolla-revenue-calculator.csproj", "{4C7BB938-EACD-45C7-B9F8-72EDF817C617}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xsolla-revenue-calculator.Tests", "xsolla-revenue-calculator.Tests\xsolla-revenue-calculator.Tests.csproj", "{743941D8-7D4A-4589-9766-B4A65AF5ABC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{4C7BB938-EACD-45C7-B9F8-72EDF817C617}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C7BB938-EACD-45C7-B9F8-72EDF817C617}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C7BB938-EACD-45C7-B9F8-72EDF817C617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{743941D8-7D4A-4589-9766-B4A65AF5ABC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{743941D8-7D4A-4589-9766-B4A65AF5ABC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{743941D8-7D4A-4589-9766-B4A65AF5ABC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{743941D8-7D4A-4589-9766-B4A65AF5ABC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
