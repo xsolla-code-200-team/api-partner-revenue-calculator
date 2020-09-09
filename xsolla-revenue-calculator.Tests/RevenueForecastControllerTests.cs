@@ -5,6 +5,7 @@ using Moq;
 using xsolla_revenue_calculator.Controllers;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Services.ModelController;
 using xsolla_revenue_calculator.Services.UserLoggingService;
 using Xunit;
 using Xunit.Sdk;
@@ -17,10 +18,11 @@ namespace xsolla_revenue_calculator.Tests
         public async void PostUserInfo_Ok()
         {
             // Arrange
-            var mockService = new Mock<IUserLoggingService>();
-            mockService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoRequestBody>()))
+            var mockLoggingService = new Mock<IUserLoggingService>();
+            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoRequestBody>()))
                 .ReturnsAsync(new UserInfo());
-            var controller = new RevenueForecastController(mockService.Object);
+            var mockModelControllerService = new Mock<IModelController>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockModelControllerService.Object);
             // Act
             var requestBody = new UserInfoRequestBody
             {

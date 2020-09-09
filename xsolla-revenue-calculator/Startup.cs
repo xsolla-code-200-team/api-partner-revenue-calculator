@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.Services.ModelController;
 using xsolla_revenue_calculator.Services.UserLoggingService;
 
 namespace xsolla_revenue_calculator
@@ -49,6 +50,7 @@ namespace xsolla_revenue_calculator
             services.Configure<Configuration>(Configuration.GetSection("Configuration"));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IUserLoggingService, MongoDbUserLoggingService>();
+            services.AddScoped<IModelController, ModelController>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
