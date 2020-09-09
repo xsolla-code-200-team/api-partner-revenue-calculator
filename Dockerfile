@@ -15,6 +15,7 @@ WORKDIR /src/xsolla-revenue-calculator.Tests
 RUN dotnet test
 
 # publish
+
 FROM build AS publish
 WORKDIR /src/xsolla-revenue-calculator
 RUN dotnet publish -c Release -o /src/publish
