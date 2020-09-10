@@ -8,7 +8,7 @@ namespace xsolla_revenue_calculator.DTO
     /// </summary>
     public class MessageToModel
     {
-        public ObjectId RevenueForecastId { get; set; }
+        public string RevenueForecastId { get; set; }
         public string Message { get; set; }
     }
 }

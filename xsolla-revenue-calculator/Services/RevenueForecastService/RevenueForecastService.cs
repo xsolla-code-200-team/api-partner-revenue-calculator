@@ -34,7 +34,7 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
         {
             return new MessageToModel
             {
-                RevenueForecastId = revenueForecast.Id,
+                RevenueForecastId = revenueForecast.Id.ToString(),
                 Message = userInfo.Email
             };
         }
