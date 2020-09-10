@@ -1,13 +1,14 @@
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using xsolla_revenue_calculator.DTO;
 
-namespace xsolla_revenue_calculator.Services.ModelController
+namespace xsolla_revenue_calculator.Services.ModelMessagingService 
 {
-    public class ModelController : IModelController
+    public class ModelMessagingService : IModelMessagingService
     {
         private readonly IOptions<Configuration> _configuration;
 
@@ -17,7 +18,7 @@ namespace xsolla_revenue_calculator.Services.ModelController
 
         private IModel _channel;
 
-        public ModelController(IOptions<Configuration> configuration)
+        public ModelMessagingService(IOptions<Configuration> configuration)
         {
             _configuration = configuration;
             ConfigureMessageProducer();
@@ -44,22 +45,19 @@ namespace xsolla_revenue_calculator.Services.ModelController
                     Uri = new Uri(_hostName)
                 }.CreateConnection().CreateModel();
             
-            _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
+            _channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
         }
         
-        public void Publish(string message)
+        public async Task SendAsync(MessageToModel message)
         {
-            var messageModel = GetMessage(message);
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel));
-            _channel.BasicPublish(_exchangeName, _routingKey, null, body);
-            Console.WriteLine(" [x] Sent {0}", message);
+            await Task.Run(
+                () =>
+                {
+                    var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+                    _channel.BasicPublish(_exchangeName, _routingKey, null, body);
+                    Console.WriteLine(" [x] Sent {0}", message);
+                }
+            );
         }
-
-        private static MessageToModel GetMessage(string payload)
-        {
-            var message = new MessageToModel { Message= payload};
-            return message;
-        }
-        
     }
 }

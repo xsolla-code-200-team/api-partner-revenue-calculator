@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
-using xsolla_revenue_calculator.Services.ModelController;
-using xsolla_revenue_calculator.Services.UserLoggingService;
+using xsolla_revenue_calculator.Services.DatabaseAccessService;
+using xsolla_revenue_calculator.Services.RevenueForecastService;
+using xsolla_revenue_calculator.ViewModels;
 
 namespace xsolla_revenue_calculator.Controllers
 {
@@ -13,26 +15,29 @@ namespace xsolla_revenue_calculator.Controllers
     [Route("[controller]")]
     public class RevenueForecastController : Controller
     {
-        private readonly IUserLoggingService _userLoggingService;
-        private readonly IModelController _modelController;
+        private readonly IDatabaseAccessService _databaseAccessService;
+        private readonly IRevenueForecastService _revenueForecastService;
+        private readonly IMapper _mapper;
 
-        public RevenueForecastController(IUserLoggingService userLoggingService, IModelController modelController)
+        public RevenueForecastController(IDatabaseAccessService databaseAccessService, IRevenueForecastService revenueForecastService, IMapper mapper)
         {
-            _userLoggingService = userLoggingService;
-            _modelController = modelController;
+            _databaseAccessService = databaseAccessService;
+            _revenueForecastService = revenueForecastService;
+            _mapper = mapper;
         }
+
         /// <summary>
         /// Method to post user information to the service
         /// </summary>
-        /// <param name="userInfoRequestBody">user model</param>
+        /// <param name="userInfo">user model</param>
         /// <response code="200">Returns in case of success</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfoRequestBody userInfoRequestBody)
+        public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfo userInfo)
         {
-            var user = _userLoggingService.LogUserAsync(userInfoRequestBody);
-            _modelController.Publish((await user).Email);
-            return Ok(await user);
+            await _databaseAccessService.LogUserAsync(userInfo);
+            var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
+            return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));
         }
     }
 }

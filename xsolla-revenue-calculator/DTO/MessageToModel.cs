@@ -1,3 +1,6 @@
+using System;
+using MongoDB.Bson;
+
 namespace xsolla_revenue_calculator.DTO
 {
     /// <summary>
@@ -5,6 +8,7 @@ namespace xsolla_revenue_calculator.DTO
     /// </summary>
     public class MessageToModel
     {
+        public ObjectId RevenueForecastId { get; set; }
         public string Message { get; set; }
     }
 }

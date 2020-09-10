@@ -1,6 +1,7 @@
 using AutoMapper;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.ViewModels;
 
 namespace xsolla_revenue_calculator.Utilities
 {
@@ -8,7 +9,9 @@ namespace xsolla_revenue_calculator.Utilities
     {
         public AutoMapperProfile()
         {
-            CreateMap<UserInfoRequestBody, UserInfo>();
+            CreateMap<RevenueForecast, RevenueForecastViewModel>()
+                .ForMember(viewModel => viewModel.Id, opt => 
+                        opt.MapFrom(src => src.Id.ToString()));
         }
     }
 }

@@ -6,16 +6,16 @@ using MongoDB.Driver;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.Services.UserLoggingService
+namespace xsolla_revenue_calculator.Services.DatabaseAccessService
 {
-    public class MongoDbUserLoggingService : IUserLoggingService
+    public class MongoDatabaseAccessService : IDatabaseAccessService
     {
         private readonly IOptions<Configuration> _configuration;
         private readonly IMapper _mapper;
         private MongoClient _client;
-        private IMongoDatabase _database => _client.GetDatabase("main");
+        private IMongoDatabase Database => _client.GetDatabase("main");
 
-        public MongoDbUserLoggingService(IOptions<Configuration> configuration, IMapper mapper)
+        public MongoDatabaseAccessService(IOptions<Configuration> configuration, IMapper mapper)
         {
             _configuration = configuration;
             _mapper = mapper;
@@ -30,12 +30,22 @@ namespace xsolla_revenue_calculator.Services.UserLoggingService
             _client = new MongoClient(connectionString);
         }
 
-        public async Task<UserInfo> LogUserAsync(UserInfoRequestBody userInfoRequestBody)
+        public async Task<UserInfo> LogUserAsync(UserInfo userInfo)
         {
-            var collection = _database.GetCollection<UserInfo>("users");
-            var userInfo = _mapper.Map<UserInfo>(userInfoRequestBody);
+            var collection = Database.GetCollection<UserInfo>("users");
             await collection.InsertOneAsync(userInfo);
             return userInfo;
+        }
+
+        public async Task<RevenueForecast> PrepareForecastAsync()
+        {
+            var collection = Database.GetCollection<RevenueForecast>("revenue-forecasts");
+            var forecast = new RevenueForecast
+            {
+                IsReady = false
+            };
+            await collection.InsertOneAsync(forecast);
+            return forecast;
         }
     }
 }
