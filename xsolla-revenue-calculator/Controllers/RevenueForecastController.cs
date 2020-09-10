@@ -33,6 +33,7 @@ namespace xsolla_revenue_calculator.Controllers
         /// <response code="200">Returns in case of success</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Produces(typeof(RevenueForecastViewModel))]
         public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfo userInfo)
         {
             await _databaseAccessService.LogUserAsync(userInfo);
