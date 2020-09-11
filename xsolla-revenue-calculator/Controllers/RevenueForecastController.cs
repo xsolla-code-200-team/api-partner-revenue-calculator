@@ -27,7 +27,7 @@ namespace xsolla_revenue_calculator.Controllers
         }
 
         /// <summary>
-        /// Method to post user information to the service
+        /// Posting user information to the service
         /// </summary>
         /// <param name="userInfo">user model</param>
         /// <response code="200">Returns in case of success</response>
@@ -39,6 +39,18 @@ namespace xsolla_revenue_calculator.Controllers
             await _databaseAccessService.LogUserAsync(userInfo);
             var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
             return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));
+        }
+        /// <summary>
+        /// Getting information about the forecast with given id
+        /// </summary>
+        /// <param name="id">id of the forecast</param>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Produces(typeof(RevenueForecastViewModel))]
+        public async Task<IActionResult> GetForecast(string id)
+        {
+            var forecast = await _databaseAccessService.GetRevenueForecast(id);
+            return Ok(_mapper.Map<RevenueForecastViewModel>(forecast));
         }
     }
 }

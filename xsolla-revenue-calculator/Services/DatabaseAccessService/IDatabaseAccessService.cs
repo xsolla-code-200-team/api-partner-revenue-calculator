@@ -7,6 +7,8 @@ namespace xsolla_revenue_calculator.Services.DatabaseAccessService
     {
         Task<UserInfo> LogUserAsync(UserInfo userInfo);
         Task<RevenueForecast> PrepareForecastAsync();
+        Task<RevenueForecast> GetRevenueForecast(string id);
+
 
     }
 }
