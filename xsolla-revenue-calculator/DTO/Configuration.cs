@@ -21,5 +21,9 @@ namespace xsolla_revenue_calculator.DTO
         public string Host { get; set; }
         public string Exchange { get; set; }
         public string RoutingKey { get; set; }
+        
+        public string ResponseQueue { get; set; }
+        
+        public string ResponseRoutingKeyBase { get; set; }
     }
 }

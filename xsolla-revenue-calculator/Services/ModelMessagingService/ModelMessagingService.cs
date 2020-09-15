@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using xsolla_revenue_calculator.DTO;
 
 namespace xsolla_revenue_calculator.Services.ModelMessagingService 
@@ -15,24 +16,30 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         private string _exchangeName;
         private string _hostName;
         private string _routingKey;
-
+        private string _responseQueue;
+        private string _responseRoutingKey;
         private IModel _channel;
+        public Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
 
         public ModelMessagingService(IOptions<Configuration> configuration)
         {
             _configuration = configuration;
             ConfigureMessageProducer();
+            InitializeChannel();
             InitializeExchange();
         }
 
         private void ConfigureMessageProducer()
         {
-            _exchangeName = _configuration.Value.RabbitMQCredentials.Exchange;
-            _hostName = Environment.GetEnvironmentVariable("CLOUDAMQP_URL") ?? _configuration.Value.RabbitMQCredentials.Host;
-            _routingKey = _configuration.Value.RabbitMQCredentials.RoutingKey;
+            var credentials = _configuration.Value.RabbitMQCredentials;
+            _exchangeName = credentials.Exchange;
+            _hostName = Environment.GetEnvironmentVariable("CLOUDAMQP_URL") ?? credentials.Host;
+            _routingKey = credentials.RoutingKey;
+            _responseQueue = credentials.ResponseQueue;
+            _responseRoutingKey = credentials.ResponseRoutingKeyBase;
         }
-        
-        private void InitializeExchange()
+
+        private void InitializeChannel()
         {
             if (_hostName == _configuration.Value.RabbitMQCredentials.Host)
                 _channel = new ConnectionFactory
@@ -44,12 +51,29 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
                 {
                     Uri = new Uri(_hostName)
                 }.CreateConnection().CreateModel();
-            
+
+        }
+        private void InitializeExchange()
+        {
             _channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
+        }
+
+        private void InitializeResponseQueue()
+        {
+            _channel.QueueDeclare(_responseQueue, exclusive: false);
+            _channel.QueueBind(_responseQueue, _exchangeName, _responseRoutingKey);
+            EventingBasicConsumer consumer = new EventingBasicConsumer(_channel);
+            consumer.Received += (_, args) =>
+            {
+                var message = GetMessageFromModel(args);
+                ResponseProcessor?.Invoke(this, message);
+            };    
+            _channel.BasicConsume(_responseQueue, true, consumer);        
         }
         
         public async Task SendAsync(MessageToModel message)
         {
+            _responseRoutingKey += $"-{message.RevenueForecastId}";
             await Task.Run(
                 () =>
                 {
@@ -58,6 +82,18 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
                     Console.WriteLine(" [x] Sent {0}", message);
                 }
             );
+            InitializeResponseQueue();
+        }
+
+        private MessageFromModel GetMessageFromModel(BasicDeliverEventArgs args)
+        {
+            var messageString = Encoding.UTF8.GetString(args.Body.ToArray());
+            return JsonConvert.DeserializeObject<MessageFromModel>(messageString);
+        }
+        
+        public void Dispose()
+        {
+            _channel?.Dispose();
         }
     }
 }

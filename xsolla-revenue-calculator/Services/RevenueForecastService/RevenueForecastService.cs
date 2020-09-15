@@ -26,8 +26,15 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
         {
             var draftForecast = await _databaseAccessService.PrepareForecastAsync();
             var messageToModel = PrepareMessageToModel(userInfo, draftForecast);
+            _modelMessagingService.ResponseProcessor = ResponseProcessor;
             await _modelMessagingService.SendAsync(messageToModel);
             return draftForecast;
+        }
+
+        private void ResponseProcessor(IModelMessagingService sender, MessageFromModel message)
+        {
+            Console.WriteLine(message);
+            sender.Dispose();
         }
 
         private MessageToModel PrepareMessageToModel(UserInfo userInfo, RevenueForecast revenueForecast)
