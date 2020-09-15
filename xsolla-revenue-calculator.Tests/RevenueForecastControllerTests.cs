@@ -40,12 +40,14 @@ namespace xsolla_revenue_calculator.Tests
             mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<UserInfo>()))
                 .ReturnsAsync(new RevenueForecast());
             var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            
             // Act
             var requestBody = new UserInfo
             {
                 Email = "123"
             };
             var result = await controller.PostUserInfoAsync(requestBody);
+            
             // Assert
             if (result is OkObjectResult objectResult)
             {

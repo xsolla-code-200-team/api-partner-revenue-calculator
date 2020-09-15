@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.Services.RevenueForecastService;
@@ -36,6 +37,7 @@ namespace xsolla_revenue_calculator.Controllers
         [Produces(typeof(RevenueForecastViewModel))]
         public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfo userInfo)
         {
+            if (!ModelState.IsValid) throw new ValidationException(ModelState);
             await _databaseAccessService.LogUserAsync(userInfo);
             var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
             return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));

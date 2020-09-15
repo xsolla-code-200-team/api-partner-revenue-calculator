@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +16,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.Middlewares.ExceptionHandlingMiddleware;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.Services.ModelMessagingService;
 using xsolla_revenue_calculator.Services.RevenueForecastService;
+using xsolla_revenue_calculator.Utilities;
+using ILogger = DnsClient.Internal.ILogger;
 
 namespace xsolla_revenue_calculator
 {
@@ -53,23 +58,29 @@ namespace xsolla_revenue_calculator
             services.AddScoped<IDatabaseAccessService, MongoDatabaseAccessService>();
             services.AddScoped<IRevenueForecastService, RevenueForecastService>();
             services.AddScoped<IModelMessagingService, ModelMessagingService>();
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            app.UseExceptionHandler(new ExceptionHandlerOptions
+            {
+                ExceptionHandler = new ExceptionHandlingMiddleware().Invoke
+            });
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            
             app.UseSwagger();
+            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xsolla Revenue Calculator API");
 
             });
-            
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
 
             app.UseHttpsRedirection();
 
