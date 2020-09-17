@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace xsolla_revenue_calculator.DTO
 {
     /// <summary>
@@ -6,11 +8,17 @@ namespace xsolla_revenue_calculator.DTO
     public class MessageFromModel
     {
         public string RevenueForecastId { get; set; }
-        public string Result { get; set; }
+        
+        public List<double> Result { get; set; }
 
         public override string ToString()
         {
-            return $"RevenueForecastID: {RevenueForecastId}, Result: {Result}";
+            var result = "";
+            foreach (double value in Result)
+            {
+                result += $"{value} ";
+            }
+            return $"RevenueForecastID: {RevenueForecastId}, Result: {result}";
         }
     }
 }
