@@ -18,6 +18,7 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         private string _routingKey;
         private string _responseQueue;
         private string _responseRoutingKey;
+        private IConnection _connection;
         private IModel _channel;
         public Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
 
@@ -42,15 +43,16 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         private void InitializeChannel()
         {
             if (_hostName == _configuration.Value.RabbitMQCredentials.Host)
-                _channel = new ConnectionFactory
+                _connection = new ConnectionFactory
                 {
                     HostName = _hostName
-                }.CreateConnection().CreateModel();
+                }.CreateConnection();
             else
-                _channel = new ConnectionFactory
+                _connection = new ConnectionFactory
                 {
                     Uri = new Uri(_hostName)
-                }.CreateConnection().CreateModel();
+                }.CreateConnection();
+            _channel = _connection.CreateModel();
 
         }
         private void InitializeExchange()
@@ -101,6 +103,7 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         {
             DisposeResponseQueue();
             _channel?.Dispose();
+            _connection?.Dispose();
         }
     }
 }
