@@ -79,6 +79,7 @@ namespace xsolla_revenue_calculator
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xsolla Revenue Calculator API");
+                c.RoutePrefix = string.Empty;
 
             });
 
