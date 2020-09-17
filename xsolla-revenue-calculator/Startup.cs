@@ -21,6 +21,7 @@ using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Middlewares.ExceptionHandlingMiddleware;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.Services.ModelMessagingService;
+using xsolla_revenue_calculator.Services.MQConnectionService;
 using xsolla_revenue_calculator.Services.RevenueForecastService;
 using xsolla_revenue_calculator.Utilities;
 using ILogger = DnsClient.Internal.ILogger;
@@ -55,6 +56,7 @@ namespace xsolla_revenue_calculator
             ); 
             services.Configure<Configuration>(Configuration.GetSection("Configuration"));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddSingleton<IMQConnectionService, MQConnectionService>();
             services.AddScoped<IDatabaseAccessService, MongoDatabaseAccessService>();
             services.AddScoped<IRevenueForecastService, RevenueForecastService>();
             services.AddScoped<IModelMessagingService, ModelMessagingService>();

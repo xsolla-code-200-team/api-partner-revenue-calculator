@@ -6,77 +6,59 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.Services.MQConnectionService;
 
 namespace xsolla_revenue_calculator.Services.ModelMessagingService 
 {
     public class ModelMessagingService : IModelMessagingService
     {
         private readonly IOptions<Configuration> _configuration;
+        private readonly IMQConnectionService _connectionService;
 
         private string _exchangeName;
-        private string _hostName;
         private string _routingKey;
         private string _responseQueue;
         private string _responseRoutingKey;
-        private IConnection _connection;
-        private IModel _channel;
         public Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
 
-        public ModelMessagingService(IOptions<Configuration> configuration)
+        public ModelMessagingService(IOptions<Configuration> configuration, IMQConnectionService connectionService)
         {
             _configuration = configuration;
-            ConfigureMessageProducer();
-            InitializeChannel();
+            _connectionService = connectionService;
+            ConfigureParameters();
             InitializeExchange();
         }
-
-        private void ConfigureMessageProducer()
+        
+        private void ConfigureParameters()
         {
             var credentials = _configuration.Value.RabbitMQCredentials;
             _exchangeName = credentials.Exchange;
-            _hostName = Environment.GetEnvironmentVariable("CLOUDAMQP_URL") ?? credentials.Host;
             _routingKey = credentials.RoutingKey;
             _responseQueue = credentials.ResponseQueue;
             _responseRoutingKey = credentials.ResponseRoutingKeyBase;
         }
-
-        private void InitializeChannel()
-        {
-            if (_hostName == _configuration.Value.RabbitMQCredentials.Host)
-                _connection = new ConnectionFactory
-                {
-                    HostName = _hostName
-                }.CreateConnection();
-            else
-                _connection = new ConnectionFactory
-                {
-                    Uri = new Uri(_hostName)
-                }.CreateConnection();
-            _channel = _connection.CreateModel();
-
-        }
         private void InitializeExchange()
         {
-            _channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
+            _connectionService.Channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
         }
 
         private void InitializeResponseQueue()
         {
-            _channel.QueueDeclare(_responseQueue, exclusive: false);
-            _channel.QueueBind(_responseQueue, _exchangeName, _responseRoutingKey);
-            EventingBasicConsumer consumer = new EventingBasicConsumer(_channel);
+            _connectionService.Channel.QueueDeclare(_responseQueue, exclusive: false);
+            _connectionService.Channel.QueueBind(_responseQueue, _exchangeName, _responseRoutingKey);
+            EventingBasicConsumer consumer = new EventingBasicConsumer(_connectionService.Channel);
             consumer.Received += (_, args) =>
             {
                 var message = GetMessageFromModel(args);
                 ResponseProcessor?.Invoke(this, message);
             };    
-            _channel.BasicConsume(_responseQueue, true, consumer);        
+            _connectionService.Channel.BasicConsume(_responseQueue, true, consumer);        
         }
 
         private void DisposeResponseQueue()
         {
-            _channel.QueueUnbind(_responseQueue, _exchangeName, _responseRoutingKey);
-            _channel.QueueDelete(_responseQueue);
+            _connectionService.Channel.QueueUnbind(_responseQueue, _exchangeName, _responseRoutingKey);
+            _connectionService.Channel.QueueDelete(_responseQueue);
         }
         
         public async Task SendAsync(MessageToModel message)
@@ -87,7 +69,7 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
                 () =>
                 {
                     var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-                    _channel.BasicPublish(_exchangeName, _routingKey, null, body);
+                    _connectionService.Channel.BasicPublish(_exchangeName, _routingKey, null, body);
                     Console.WriteLine(" [x] Sent {0}", message.RevenueForecastId);
                 }
             );
@@ -102,8 +84,6 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         public void Dispose()
         {
             DisposeResponseQueue();
-            _channel?.Dispose();
-            _connection?.Dispose();
         }
     }
 }
