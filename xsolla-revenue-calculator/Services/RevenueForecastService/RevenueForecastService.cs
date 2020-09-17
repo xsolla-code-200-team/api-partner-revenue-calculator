@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -15,11 +16,14 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
     {
         private readonly IDatabaseAccessService _databaseAccessService;
         private readonly IModelMessagingService _modelMessagingService;
+        private readonly IMapper _mapper;
 
-        public RevenueForecastService(IDatabaseAccessService databaseAccessService, IModelMessagingService modelMessagingService)
+        public RevenueForecastService(IDatabaseAccessService databaseAccessService,
+            IModelMessagingService modelMessagingService, IMapper mapper)
         {
             _databaseAccessService = databaseAccessService;
             _modelMessagingService = modelMessagingService;
+            _mapper = mapper;
         }
 
         public async Task<RevenueForecast> StartCalculationAsync(UserInfo userInfo)
@@ -39,11 +43,9 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
 
         private MessageToModel PrepareMessageToModel(UserInfo userInfo, RevenueForecast revenueForecast)
         {
-            return new MessageToModel
-            {
-                RevenueForecastId = revenueForecast.Id.ToString(),
-                Message = userInfo.Email
-            };
+            var message = _mapper.Map<MessageToModel>(userInfo);
+            message.RevenueForecastId = revenueForecast.Id.ToString();
+            return message;
         }
     }
 }
