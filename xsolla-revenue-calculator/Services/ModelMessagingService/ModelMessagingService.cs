@@ -70,6 +70,12 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
             };    
             _channel.BasicConsume(_responseQueue, true, consumer);        
         }
+
+        private void DisposeResponseQueue()
+        {
+            _channel.QueueUnbind(_responseQueue, _exchangeName, _responseRoutingKey);
+            _channel.QueueDelete(_responseQueue);
+        }
         
         public async Task SendAsync(MessageToModel message)
         {
@@ -93,6 +99,7 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         
         public void Dispose()
         {
+            DisposeResponseQueue();
             _channel?.Dispose();
         }
     }
