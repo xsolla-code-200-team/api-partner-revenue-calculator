@@ -51,6 +51,16 @@ namespace xsolla_revenue_calculator.Services.DatabaseAccessService
             return forecast;
         }
 
+        public async Task UpdateRevenueForecast(MessageFromModel message)
+        {
+            var collection = Database.GetCollection<RevenueForecast>(_revenueForecastCollection);
+            var filter = Builders<RevenueForecast>.Filter.Eq("_id", new ObjectId(message.RevenueForecastId));
+            var updateStatus = Builders<RevenueForecast>.Update.Set(x=>x.IsReady, true);
+            var updateResult = Builders<RevenueForecast>.Update.Set(x=>x.RevenuePerMonth, message.Result);
+            var result = await collection.UpdateOneAsync(filter, updateStatus);
+            var result2 = await collection.UpdateOneAsync(filter, updateResult);
+        }
+
         public async Task<RevenueForecast> GetRevenueForecast(string id)
         {
             var collection = Database.GetCollection<RevenueForecast>(_revenueForecastCollection);

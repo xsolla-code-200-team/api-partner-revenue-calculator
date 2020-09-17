@@ -37,6 +37,7 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
 
         private void ResponseProcessor(IModelMessagingService sender, MessageFromModel message)
         {
+            _databaseAccessService.UpdateRevenueForecast(message);
             Console.WriteLine(message);
             sender.Dispose();
         }
