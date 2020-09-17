@@ -80,15 +80,15 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         public async Task SendAsync(MessageToModel message)
         {
             _responseRoutingKey += $"-{message.RevenueForecastId}";
+            InitializeResponseQueue();
             await Task.Run(
                 () =>
                 {
                     var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
                     _channel.BasicPublish(_exchangeName, _routingKey, null, body);
-                    Console.WriteLine(" [x] Sent {0}", message);
+                    Console.WriteLine(" [x] Sent {0}", message.RevenueForecastId);
                 }
             );
-            InitializeResponseQueue();
         }
 
         private MessageFromModel GetMessageFromModel(BasicDeliverEventArgs args)
