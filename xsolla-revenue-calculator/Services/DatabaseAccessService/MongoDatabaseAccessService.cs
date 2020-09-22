@@ -5,68 +5,62 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Models;
 
 namespace xsolla_revenue_calculator.Services.DatabaseAccessService
 {
     public class MongoDatabaseAccessService : IDatabaseAccessService
     {
-        private string _revenueForecastCollection = "revenue-forecasts";
-        private string _usersCollection = "users";
-        private readonly IOptions<Configuration> _configuration;
-        private readonly IMapper _mapper;
+        private readonly IMongoDbConfiguration _mongoDbConfiguration;
         private MongoClient _client;
-        private IMongoDatabase Database => _client.GetDatabase("main");
+        private IMongoDatabase _database;
+        private IMongoCollection<RevenueForecast> _forecasts;
+        private IMongoCollection<UserInfo> _users;
 
-        public MongoDatabaseAccessService(IOptions<Configuration> configuration, IMapper mapper)
+        public MongoDatabaseAccessService(IMongoDbConfiguration mongoDbConfiguration)
         {
-            _configuration = configuration;
-            _mapper = mapper;
-            ConfigureClient();
+            _mongoDbConfiguration = mongoDbConfiguration;
+            ConfigureService();
         }
         
-        private void ConfigureClient()
+        private void ConfigureService()
         {
-            var connectionString = _configuration.Value.MongoDbCredentials.Uri;
-            var password = Environment.GetEnvironmentVariable("MONGODB_PASSWORD") ?? "dbPassword";
+            var connectionString = _mongoDbConfiguration.Uri;
+            var password = Environment.GetEnvironmentVariable("MONGODB_PASSWORD") ?? _mongoDbConfiguration.DefaultPassword;
             connectionString = connectionString.Replace("<password>", password);
             _client = new MongoClient(connectionString);
+            _database = _client.GetDatabase("main");
+            _forecasts = _database.GetCollection<RevenueForecast>(_mongoDbConfiguration.ForecastsCollection);
+            _users = _database.GetCollection<UserInfo>(_mongoDbConfiguration.UsersCollection);
         }
 
         public async Task<UserInfo> LogUserAsync(UserInfo userInfo)
         {
-            var collection = Database.GetCollection<UserInfo>(_usersCollection);
-            await collection.InsertOneAsync(userInfo);
+            await _users.InsertOneAsync(userInfo);
             return userInfo;
         }
 
-        public async Task<RevenueForecast> PrepareForecastAsync()
+        public async Task<RevenueForecast> CreateForecastAsync()
         {
-            var collection = Database.GetCollection<RevenueForecast>(_revenueForecastCollection);
             var forecast = new RevenueForecast
             {
                 IsReady = false
             };
-            await collection.InsertOneAsync(forecast);
+            await _forecasts.InsertOneAsync(forecast);
             return forecast;
         }
 
-        public async Task UpdateRevenueForecast(MessageFromModel message)
+        public async Task UpdateForecastAsync(MessageFromModel message)
         {
-            var collection = Database.GetCollection<RevenueForecast>(_revenueForecastCollection);
-            var filter = Builders<RevenueForecast>.Filter.Eq("_id", new ObjectId(message.RevenueForecastId));
-            var updateStatus = Builders<RevenueForecast>.Update.Set(x=>x.IsReady, true);
-            var updateResult = Builders<RevenueForecast>.Update.Set(x=>x.RevenuePerMonth, message.Result);
-            var result = await collection.UpdateOneAsync(filter, updateStatus);
-            var result2 = await collection.UpdateOneAsync(filter, updateResult);
+            var forecast = (await _forecasts.FindAsync(f => f.Id == new ObjectId(message.RevenueForecastId))).Single();
+            forecast.RevenuePerMonth = message.Result;
+            await _forecasts.ReplaceOneAsync(f => f.Id == new ObjectId(message.RevenueForecastId), forecast);
         }
 
-        public async Task<RevenueForecast> GetRevenueForecast(string id)
+        public async Task<RevenueForecast> GetForecastAsync(string id)
         {
-            var collection = Database.GetCollection<RevenueForecast>(_revenueForecastCollection);
-            var stringFilter = "{ _id: ObjectId('" + id + "') }";
-            var forecast = await collection.FindAsync(stringFilter);
-            return forecast.Single();
+            return (await _forecasts.FindAsync(forecast => forecast.Id == new ObjectId(id))).Single();
         }
     }
 }

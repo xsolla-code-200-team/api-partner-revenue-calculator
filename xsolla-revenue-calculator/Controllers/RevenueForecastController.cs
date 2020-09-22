@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
@@ -51,7 +49,7 @@ namespace xsolla_revenue_calculator.Controllers
         [Produces(typeof(RevenueForecastViewModel))]
         public async Task<IActionResult> GetForecast(string id)
         {
-            var forecast = await _databaseAccessService.GetRevenueForecast(id);
+            var forecast = await _databaseAccessService.GetForecastAsync(id);
             return Ok(_mapper.Map<RevenueForecastViewModel>(forecast));
         }
     }

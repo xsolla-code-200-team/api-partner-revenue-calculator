@@ -1,15 +1,12 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using xsolla_revenue_calculator.Exceptions;
 
-namespace xsolla_revenue_calculator.Middlewares.ExceptionHandlingMiddleware
+namespace xsolla_revenue_calculator.Middlewares
 {
     public class ExceptionHandlingMiddleware
     {

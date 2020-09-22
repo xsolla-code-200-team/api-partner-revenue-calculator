@@ -15,10 +15,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using xsolla_revenue_calculator.DTO;
-using xsolla_revenue_calculator.Middlewares.ExceptionHandlingMiddleware;
+using xsolla_revenue_calculator.DTO.Configuration;
+using xsolla_revenue_calculator.Middlewares;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.Services.ModelMessagingService;
 using xsolla_revenue_calculator.Services.MQConnectionService;
@@ -54,10 +56,18 @@ namespace xsolla_revenue_calculator
                     c.IncludeXmlComments(xmlPath);
                 }
             ); 
-            services.Configure<Configuration>(Configuration.GetSection("Configuration"));
+            services.Configure<MongoDbConfiguration>(Configuration.GetSection(nameof(MongoDbConfiguration)));
+            services.AddSingleton<IMongoDbConfiguration>(sp =>
+                sp.GetRequiredService<IOptions<MongoDbConfiguration>>().Value);
+            
+            services.Configure<RabbitMqConfiguration>(Configuration.GetSection(nameof(RabbitMqConfiguration)));
+            services.AddSingleton<IRabbitMqConfiguration>(sp =>
+                sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddSingleton<IMQConnectionService, MQConnectionService>();
-            services.AddScoped<IDatabaseAccessService, MongoDatabaseAccessService>();
+            
+            services.AddSingleton<IMqConnectionService, MqConnectionService>();
+            services.AddSingleton<IDatabaseAccessService, MongoDatabaseAccessService>();
             services.AddScoped<IRevenueForecastService, RevenueForecastService>();
             services.AddScoped<IModelMessagingService, ModelMessagingService>();
             services.Configure<ApiBehaviorOptions>(options =>

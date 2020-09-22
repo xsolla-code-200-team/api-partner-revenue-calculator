@@ -11,9 +11,8 @@ namespace xsolla_revenue_calculator.Utilities
         public AutoMapperProfile()
         {
             CreateMap<RevenueForecast, RevenueForecastViewModel>()
-                .ForMember(viewModel => viewModel.Id, opt => 
-                        opt.MapFrom(src => src.Id.ToString()))
-                .ForMember(viewModel => viewModel.TotalRevenue, opt => opt.MapFrom(src => src.RevenuePerMonth.Sum()));
+                .ForMember(viewModel => viewModel.Id, opt =>
+                    opt.MapFrom(src => src.Id.ToString()));
             CreateMap<UserInfo, MessageToModel>();
         }
     }

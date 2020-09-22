@@ -6,14 +6,15 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Services.MQConnectionService;
 
 namespace xsolla_revenue_calculator.Services.ModelMessagingService 
 {
     public class ModelMessagingService : IModelMessagingService
     {
-        private readonly IOptions<Configuration> _configuration;
-        private readonly IMQConnectionService _connectionService;
+        private readonly IRabbitMqConfiguration _rabbitMqConfiguration;
+        private readonly IMqConnectionService _connectionService;
 
         private string _exchangeName;
         private string _routingKey;
@@ -21,9 +22,9 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         private string _responseRoutingKey;
         public Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
 
-        public ModelMessagingService(IOptions<Configuration> configuration, IMQConnectionService connectionService)
+        public ModelMessagingService(IRabbitMqConfiguration rabbitMqConfiguration, IMqConnectionService connectionService)
         {
-            _configuration = configuration;
+            _rabbitMqConfiguration = rabbitMqConfiguration;
             _connectionService = connectionService;
             ConfigureParameters();
             InitializeExchange();
@@ -31,11 +32,10 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         
         private void ConfigureParameters()
         {
-            var credentials = _configuration.Value.RabbitMQCredentials;
-            _exchangeName = credentials.Exchange;
-            _routingKey = credentials.RoutingKey;
-            _responseQueue = credentials.ResponseQueue;
-            _responseRoutingKey = credentials.ResponseRoutingKeyBase;
+            _exchangeName = _rabbitMqConfiguration.Exchange;
+            _routingKey = _rabbitMqConfiguration.RoutingKey;
+            _responseQueue = _rabbitMqConfiguration.ResponseQueue;
+            _responseRoutingKey = _rabbitMqConfiguration.ResponseRoutingKeyBase;
         }
         private void InitializeExchange()
         {

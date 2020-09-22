@@ -2,32 +2,32 @@ using System;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.DTO.Configuration;
 
 namespace xsolla_revenue_calculator.Services.MQConnectionService
 {
-    public class MQConnectionService : IDisposable, IMQConnectionService
+    public class MqConnectionService : IDisposable, IMqConnectionService
     {
         private string _hostName;
-        private readonly IOptions<Configuration> _configuration;
+        private readonly IRabbitMqConfiguration _rabbitMqConfiguration;
         private IConnection _connection;
         public IModel Channel { get; set; }
 
-        public MQConnectionService(IOptions<Configuration> configuration)
+        public MqConnectionService(IRabbitMqConfiguration rabbitMqConfiguration)
         {
-            _configuration = configuration;
+            _rabbitMqConfiguration = rabbitMqConfiguration;
             ConfigureParameters();
             InitializeChannel();
         }
 
         private void ConfigureParameters()
         {
-            var credentials = _configuration.Value.RabbitMQCredentials;
-            _hostName = Environment.GetEnvironmentVariable("CLOUDAMQP_URL") ?? credentials.Host;
+            _hostName = Environment.GetEnvironmentVariable("CLOUDAMQP_URL") ?? _rabbitMqConfiguration.Host;
         }
 
         private void InitializeChannel()
         {
-            if (_hostName == _configuration.Value.RabbitMQCredentials.Host)
+            if (_hostName == _rabbitMqConfiguration.Host)
                 _connection = new ConnectionFactory
                 {
                     HostName = _hostName
