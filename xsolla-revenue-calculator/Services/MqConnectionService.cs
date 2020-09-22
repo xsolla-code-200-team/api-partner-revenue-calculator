@@ -47,4 +47,8 @@ namespace xsolla_revenue_calculator.Services.MQConnectionService
             _connection.Dispose();
         }
     }
+    public interface IMqConnectionService
+    {
+        public IModel Channel { get; set; }
+    }
 }

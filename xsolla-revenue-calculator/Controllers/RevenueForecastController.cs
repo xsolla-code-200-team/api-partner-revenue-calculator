@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Services;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
-using xsolla_revenue_calculator.Services.RevenueForecastService;
 using xsolla_revenue_calculator.ViewModels;
 
 namespace xsolla_revenue_calculator.Controllers

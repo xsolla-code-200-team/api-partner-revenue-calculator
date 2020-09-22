@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -9,7 +8,7 @@ using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Services.MQConnectionService;
 
-namespace xsolla_revenue_calculator.Services.ModelMessagingService 
+namespace xsolla_revenue_calculator.Services 
 {
     public class ModelMessagingService : IModelMessagingService
     {
@@ -85,5 +84,13 @@ namespace xsolla_revenue_calculator.Services.ModelMessagingService
         {
             DisposeResponseQueue();
         }
+    }
+    
+    public interface IModelMessagingService
+    {
+        Task SendAsync(MessageToModel message);
+        Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
+
+        void Dispose();
     }
 }

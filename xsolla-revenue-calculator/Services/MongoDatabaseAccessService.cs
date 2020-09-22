@@ -63,4 +63,13 @@ namespace xsolla_revenue_calculator.Services.DatabaseAccessService
             return (await _forecasts.FindAsync(forecast => forecast.Id == new ObjectId(id))).Single();
         }
     }
+    
+    public interface IDatabaseAccessService
+    {
+        Task<UserInfo> LogUserAsync(UserInfo userInfo);
+        Task<RevenueForecast> CreateForecastAsync();
+        Task<RevenueForecast> GetForecastAsync(string id);
+        Task UpdateForecastAsync(MessageFromModel message);
+
+    }
 }

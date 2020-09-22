@@ -1,16 +1,11 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Services.DatabaseAccessService;
-using xsolla_revenue_calculator.Services.ModelMessagingService;
 
-namespace xsolla_revenue_calculator.Services.RevenueForecastService
+namespace xsolla_revenue_calculator.Services
 {
     public class RevenueForecastService : IRevenueForecastService
     {
@@ -48,5 +43,10 @@ namespace xsolla_revenue_calculator.Services.RevenueForecastService
             message.RevenueForecastId = revenueForecast.Id.ToString();
             return message;
         }
+    }
+    
+    public interface IRevenueForecastService
+    {
+        Task<RevenueForecast> StartCalculationAsync(UserInfo userInfo);
     }
 }
