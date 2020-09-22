@@ -67,6 +67,7 @@ namespace xsolla_revenue_calculator.Services
             await Task.Run(
                 () =>
                 {
+                    Console.WriteLine(JsonConvert.SerializeObject(message));
                     var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
                     _connectionService.Channel.BasicPublish(_exchangeName, _routingKey, null, body);
                     Console.WriteLine(" [x] Sent {0}", message.RevenueForecastId);

@@ -2,10 +2,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Services;
-using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.ViewModels;
 
 namespace xsolla_revenue_calculator.Controllers
@@ -26,20 +26,36 @@ namespace xsolla_revenue_calculator.Controllers
         }
 
         /// <summary>
-        /// Posting user information to the service
+        /// Posting user information from the simple form to the service
         /// </summary>
-        /// <param name="userInfo">user model</param>
         /// <response code="200">Returns in case of success</response>
-        [HttpPost]
+        [HttpPost("Simple")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Produces(typeof(RevenueForecastViewModel))]
-        public async Task<IActionResult> PostUserInfoAsync([FromBody] UserInfo userInfo)
+        public async Task<IActionResult> PostUserSimpleAsync([FromBody] UserSimpleFormDto userInfoDto)
         {
             if (!ModelState.IsValid) throw new ValidationException(ModelState);
-            await _databaseAccessService.LogUserAsync(userInfo);
+            var userInfo = await _databaseAccessService.LogUserAsync(userInfoDto);
             var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
             return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));
         }
+        
+        
+        /// <summary>
+        /// Posting user information from the compelx form to the service
+        /// </summary>
+        /// <response code="200">Returns in case of success</response>
+        [HttpPost("Complex")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Produces(typeof(RevenueForecastViewModel))]
+        public async Task<IActionResult> PostUserComplexAsync([FromBody] UserComplexFormDto userInfoDto)
+        {
+            if (!ModelState.IsValid) throw new ValidationException(ModelState);
+            var userInfo = await _databaseAccessService.LogUserAsync(userInfoDto);
+            var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
+            return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));
+        }
+        
         /// <summary>
         /// Getting information about the forecast with given id
         /// </summary>

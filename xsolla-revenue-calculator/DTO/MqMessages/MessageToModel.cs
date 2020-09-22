@@ -1,16 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
 
-namespace xsolla_revenue_calculator.Models
+namespace xsolla_revenue_calculator.DTO
 {
-    public class UserInfo
+    /// <summary>
+    /// To use for sending messages to model via RabbitMQ
+    /// </summary>
+    public class MessageToModel
     {
-        public ObjectId Id { get; set; }
-        
-        [JsonPropertyName("forecastType")]
-        public ForecastType ForecastType { get; set; }
+        [JsonPropertyName("revenueForecastID")]
+        public string RevenueForecastId { get; set; }
         
         [JsonPropertyName("productName")]
         public string ProductName { get; set; }
@@ -42,11 +44,5 @@ namespace xsolla_revenue_calculator.Models
         [JsonPropertyName("email")]
         [EmailAddress]
         public string Email { get; set; }
-    }
-
-    public enum ForecastType
-    {
-        Percentage,
-        Absolute
     }
 }

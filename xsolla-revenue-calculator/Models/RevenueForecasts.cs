@@ -1,18 +1,18 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using MongoDB.Bson;
 using Newtonsoft.Json.Converters;
-using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.ViewModels
+namespace xsolla_revenue_calculator.Models
 {
-    public class RevenueForecastViewModel
+    public class RevenueForecasts
     {
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
         public bool IsReady { get; set; }
         
         public string ForecastType { get; set; }
         
         public ParticularForecast ChosenForecast { get; set; }
         
-        public List<ParticularForecast> OtherForecasts { get; set; } 
-    }    
+        public List<ParticularForecast> OtherForecasts { get; set; } }
 }

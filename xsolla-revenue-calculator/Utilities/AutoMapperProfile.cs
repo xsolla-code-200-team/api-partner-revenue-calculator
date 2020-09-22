@@ -10,10 +10,12 @@ namespace xsolla_revenue_calculator.Utilities
     {
         public AutoMapperProfile()
         {
-            CreateMap<RevenueForecast, RevenueForecastViewModel>()
+            CreateMap<RevenueForecasts, RevenueForecastViewModel>()
                 .ForMember(viewModel => viewModel.Id, opt =>
                     opt.MapFrom(src => src.Id.ToString()));
             CreateMap<UserInfo, MessageToModel>();
+            CreateMap<UserComplexFormDto, UserInfo>();
+            CreateMap<UserSimpleFormDto, UserInfo>();
         }
     }
 }

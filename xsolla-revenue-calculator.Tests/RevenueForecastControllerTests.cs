@@ -7,7 +7,6 @@ using xsolla_revenue_calculator.Controllers;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Services;
-using xsolla_revenue_calculator.Services.DatabaseAccessService;
 using xsolla_revenue_calculator.Utilities;
 using xsolla_revenue_calculator.ViewModels;
 using Xunit;
@@ -30,23 +29,23 @@ namespace xsolla_revenue_calculator.Tests
         }
 
         [Fact]
-        public async void PostUserInfo_Ok()
+        public async void PostUserComplex_Ok()
         {
             // Arrange
             var mockLoggingService = new Mock<IDatabaseAccessService>();
-            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfo>()))
+            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserComplexFormDto>()))
                 .ReturnsAsync(new UserInfo());
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
             mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<UserInfo>()))
-                .ReturnsAsync(new RevenueForecast());
+                .ReturnsAsync(new RevenueForecasts());
             var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
             
             // Act
-            var requestBody = new UserInfo
+            var requestBody = new UserComplexFormDto
             {
                 Email = "123"
             };
-            var result = await controller.PostUserInfoAsync(requestBody);
+            var result = await controller.PostUserComplexAsync(requestBody);
             
             // Assert
             if (result is OkObjectResult objectResult)

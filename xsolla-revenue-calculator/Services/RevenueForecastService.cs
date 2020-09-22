@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
-using xsolla_revenue_calculator.Services.DatabaseAccessService;
 
 namespace xsolla_revenue_calculator.Services
 {
@@ -21,32 +20,32 @@ namespace xsolla_revenue_calculator.Services
             _mapper = mapper;
         }
 
-        public async Task<RevenueForecast> StartCalculationAsync(UserInfo userInfo)
+        public async Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo)
         {
             var draftForecast = await _databaseAccessService.CreateForecastAsync();
             var messageToModel = PrepareMessageToModel(userInfo, draftForecast);
-            _modelMessagingService.ResponseProcessor = ResponseProcessor;
+            _modelMessagingService.ResponseProcessor = ModelResponseProcessor;
             await _modelMessagingService.SendAsync(messageToModel);
             return draftForecast;
         }
 
-        private void ResponseProcessor(IModelMessagingService sender, MessageFromModel message)
+        private void ModelResponseProcessor(IModelMessagingService sender, MessageFromModel message)
         {
             _databaseAccessService.UpdateForecastAsync(message);
             Console.WriteLine(message);
             sender.Dispose();
         }
 
-        private MessageToModel PrepareMessageToModel(UserInfo userInfo, RevenueForecast revenueForecast)
+        private MessageToModel PrepareMessageToModel(UserInfo userInfo, RevenueForecasts revenueForecasts)
         {
             var message = _mapper.Map<MessageToModel>(userInfo);
-            message.RevenueForecastId = revenueForecast.Id.ToString();
+            message.RevenueForecastId = revenueForecasts.Id.ToString();
             return message;
         }
     }
     
     public interface IRevenueForecastService
     {
-        Task<RevenueForecast> StartCalculationAsync(UserInfo userInfo);
+        Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo);
     }
 }

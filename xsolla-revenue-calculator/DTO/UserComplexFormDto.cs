@@ -6,19 +6,14 @@ using MongoDB.Bson;
 
 namespace xsolla_revenue_calculator.DTO
 {
-    /// <summary>
-    /// To use for sending messages to model via RabbitMQ
-    /// </summary>
-    public class MessageToModel
+    public class UserComplexFormDto
     {
-        [JsonPropertyName("revenueForecastID")]
-        public string RevenueForecastId { get; set; }
-        
-        [JsonPropertyName("companyName")]
-        public string CompanyName { get; set; }
-        
+
         [JsonPropertyName("productName")]
         public string ProductName { get; set; }
+        
+        [JsonPropertyName("releaseDate")]
+        public string ReleaseDate { get; set; }
         
         [JsonPropertyName("genres")]
         public List<string> Genres { get; set; }
@@ -35,11 +30,14 @@ namespace xsolla_revenue_calculator.DTO
         [JsonPropertyName("sales")]
         public string Sales { get; set; }
         
-        [JsonPropertyName("score")]
-        public string Score { get; set; }
+        [JsonPropertyName("cost")]
+        public string Cost { get; set; }
+        
+        [JsonPropertyName("companyName")]
+        public string CompanyName { get; set; }
         
         [JsonPropertyName("email")]
-        public string Email { get; set; }      
-        
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }
