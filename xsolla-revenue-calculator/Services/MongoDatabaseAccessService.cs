@@ -15,7 +15,7 @@ namespace xsolla_revenue_calculator.Services
         private MongoClient _client;
         private IMongoDatabase _database;
         private IMongoCollection<RevenueForecasts> _forecasts;
-        private IMongoCollection<UserInfo> _users;
+        private IMongoCollection<BsonDocument> _users;
         private readonly IMapper _mapper;
 
         public MongoDatabaseAccessService(IMongoDbConfiguration mongoDbConfiguration, IMapper mapper)
@@ -34,30 +34,31 @@ namespace xsolla_revenue_calculator.Services
             _client = new MongoClient(connectionString);
             _database = _client.GetDatabase("main");
             _forecasts = _database.GetCollection<RevenueForecasts>(_mongoDbConfiguration.ForecastsCollection);
-            _users = _database.GetCollection<UserInfo>(_mongoDbConfiguration.UsersCollection);
+            _users = _database.GetCollection<BsonDocument>(_mongoDbConfiguration.UsersCollection);
         }
 
         public async Task<UserInfo> LogUserAsync(UserComplexFormDto userInfoDto)
         {
+            await _users.InsertOneAsync(userInfoDto.ToBsonDocument());
             var userInfo = _mapper.Map<UserInfo>(userInfoDto);
             userInfo.ForecastType = ForecastType.Absolute;
-            await _users.InsertOneAsync(userInfo);
             return userInfo;
         }
         
         public async Task<UserInfo> LogUserAsync(UserSimpleFormDto userInfoDto)
         {
+            await _users.InsertOneAsync(userInfoDto.ToBsonDocument());
             var userInfo = _mapper.Map<UserInfo>(userInfoDto);
             userInfo.ForecastType = ForecastType.Percentage;
-            await _users.InsertOneAsync(userInfo);
             return userInfo;
         }
         
-        public async Task<RevenueForecasts> CreateForecastAsync()
+        public async Task<RevenueForecasts> CreateForecastAsync(UserInfo userInfo)
         {
             var forecast = new RevenueForecasts
             {
-                IsReady = false
+                IsReady = false,
+                ForecastType = userInfo.ForecastType
             };
             await _forecasts.InsertOneAsync(forecast);
             return forecast;
@@ -83,7 +84,7 @@ namespace xsolla_revenue_calculator.Services
         
         Task<UserInfo> LogUserAsync(UserSimpleFormDto userInfo);
 
-        Task<RevenueForecasts> CreateForecastAsync();
+        Task<RevenueForecasts> CreateForecastAsync(UserInfo userInfo);
         Task<RevenueForecasts> GetForecastAsync(string id);
         Task UpdateForecastAsync(MessageFromModel message);
 

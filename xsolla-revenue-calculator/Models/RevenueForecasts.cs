@@ -10,7 +10,7 @@ namespace xsolla_revenue_calculator.Models
         public ObjectId Id { get; set; }
         public bool IsReady { get; set; }
         
-        public string ForecastType { get; set; }
+        public ForecastType ForecastType { get; set; }
         
         public ParticularForecast ChosenForecast { get; set; }
         

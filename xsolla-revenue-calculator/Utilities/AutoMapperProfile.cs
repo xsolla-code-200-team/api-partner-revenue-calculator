@@ -12,7 +12,9 @@ namespace xsolla_revenue_calculator.Utilities
         {
             CreateMap<RevenueForecasts, RevenueForecastViewModel>()
                 .ForMember(viewModel => viewModel.Id, opt =>
-                    opt.MapFrom(src => src.Id.ToString()));
+                    opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(viewModel => viewModel.ForecastType, opt => 
+                    opt.MapFrom(src => src.ForecastType.ToString()));
             CreateMap<UserInfo, MessageToModel>();
             CreateMap<UserComplexFormDto, UserInfo>();
             CreateMap<UserSimpleFormDto, UserInfo>();

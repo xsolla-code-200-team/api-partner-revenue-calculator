@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
+using Newtonsoft.Json.Converters;
 
 namespace xsolla_revenue_calculator.Models
 {
@@ -42,11 +43,5 @@ namespace xsolla_revenue_calculator.Models
         [JsonPropertyName("email")]
         [EmailAddress]
         public string Email { get; set; }
-    }
-
-    public enum ForecastType
-    {
-        Percentage,
-        Absolute
     }
 }

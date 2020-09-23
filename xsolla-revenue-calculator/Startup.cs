@@ -22,7 +22,6 @@ using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Middlewares;
 using xsolla_revenue_calculator.Services;
-using xsolla_revenue_calculator.Services.MQConnectionService;
 using xsolla_revenue_calculator.Utilities;
 using ILogger = DnsClient.Internal.ILogger;
 

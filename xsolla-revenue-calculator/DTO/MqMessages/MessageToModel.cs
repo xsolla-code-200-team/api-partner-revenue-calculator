@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
+using xsolla_revenue_calculator.Models;
 
 namespace xsolla_revenue_calculator.DTO
 {
@@ -14,6 +15,9 @@ namespace xsolla_revenue_calculator.DTO
         [JsonPropertyName("revenueForecastID")]
         public string RevenueForecastId { get; set; }
         
+        [JsonPropertyName("forecastType")]
+        public string ForecastType { get; set; }
+
         [JsonPropertyName("productName")]
         public string ProductName { get; set; }
         

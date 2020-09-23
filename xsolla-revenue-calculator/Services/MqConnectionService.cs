@@ -1,10 +1,8 @@
 using System;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
-using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 
-namespace xsolla_revenue_calculator.Services.MQConnectionService
+namespace xsolla_revenue_calculator.Services
 {
     public class MqConnectionService : IDisposable, IMqConnectionService
     {

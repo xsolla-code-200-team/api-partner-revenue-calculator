@@ -22,7 +22,7 @@ namespace xsolla_revenue_calculator.Services
 
         public async Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo)
         {
-            var draftForecast = await _databaseAccessService.CreateForecastAsync();
+            var draftForecast = await _databaseAccessService.CreateForecastAsync(userInfo);
             var messageToModel = PrepareMessageToModel(userInfo, draftForecast);
             _modelMessagingService.ResponseProcessor = ModelResponseProcessor;
             await _modelMessagingService.SendAsync(messageToModel);
@@ -40,6 +40,7 @@ namespace xsolla_revenue_calculator.Services
         {
             var message = _mapper.Map<MessageToModel>(userInfo);
             message.RevenueForecastId = revenueForecasts.Id.ToString();
+            message.ForecastType = revenueForecasts.ForecastType.ToString().ToLower();
             return message;
         }
     }

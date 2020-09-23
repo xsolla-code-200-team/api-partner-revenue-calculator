@@ -42,7 +42,7 @@ namespace xsolla_revenue_calculator.Controllers
         
         
         /// <summary>
-        /// Posting user information from the compelx form to the service
+        /// Posting user information from the complex form to the service
         /// </summary>
         /// <response code="200">Returns in case of success</response>
         [HttpPost("Complex")]
