@@ -40,7 +40,7 @@ namespace xsolla_revenue_calculator.Services
         {
             var message = _mapper.Map<MessageToModel>(userInfo);
             message.RevenueForecastId = revenueForecasts.Id.ToString();
-            message.ForecastType = revenueForecasts.ForecastType.ToString().ToLower();
+            message.ForecastType = revenueForecasts.ForecastType.ToString();
             return message;
         }
     }
