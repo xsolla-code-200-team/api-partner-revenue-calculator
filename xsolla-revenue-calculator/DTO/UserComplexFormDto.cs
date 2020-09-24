@@ -34,10 +34,10 @@ namespace xsolla_revenue_calculator.DTO
         public List<string> Regions { get; set; }
         
         [JsonPropertyName("sales")]
-        public string Sales { get; set; }
+        public double Sales { get; set; }
         
         [JsonPropertyName("cost")]
-        public string Cost { get; set; }
+        public double Cost { get; set; }
         
         [JsonPropertyName("companyName")]
         public string CompanyName { get; set; }
