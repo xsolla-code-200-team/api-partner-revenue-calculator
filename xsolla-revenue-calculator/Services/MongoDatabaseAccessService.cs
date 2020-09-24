@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
+using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;
 
 namespace xsolla_revenue_calculator.Services
@@ -69,6 +70,7 @@ namespace xsolla_revenue_calculator.Services
             var forecast = (await _forecasts.FindAsync(f => f.Id == new ObjectId(message.RevenueForecastId))).Single();
             forecast.ChosenForecast = message.ChosenForecast;
             forecast.OtherForecasts = message.OtherForecasts;
+            forecast.IsReady = true;
             var result = await _forecasts.ReplaceOneAsync(f => f.Id == new ObjectId(message.RevenueForecastId), forecast);
         }
 

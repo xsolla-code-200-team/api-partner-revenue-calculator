@@ -1,4 +1,14 @@
-$HEADER$namespace $NAMESPACE$
+namespace xsolla_revenue_calculator.DTO.Configuration
 {
-  public class $CLASS$ {$END$}
+    public class RedisConfiguration : IRedisConfiguration
+    {
+        public string Host { get; set; }
+        public string Port { get; set; }
+    }
+
+    public interface IRedisConfiguration
+    {
+        public string Host { get; set; }
+        public string Port { get; set; }
+    }
 }

@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MongoDB.Bson;
-using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.DTO
+namespace xsolla_revenue_calculator.DTO.MqMessages
 {
     /// <summary>
     /// To use for sending messages to model via RabbitMQ
@@ -18,9 +14,6 @@ namespace xsolla_revenue_calculator.DTO
         [JsonPropertyName("forecastType")]
         public string ForecastType { get; set; }
 
-        [JsonPropertyName("productName")]
-        public string ProductName { get; set; }
-        
         [JsonPropertyName("releaseDate")]
         public string ReleaseDate { get; set; }
         
@@ -41,12 +34,5 @@ namespace xsolla_revenue_calculator.DTO
         
         [JsonPropertyName("cost")]
         public string Cost { get; set; }
-        
-        [JsonPropertyName("companyName")]
-        public string CompanyName { get; set; }
-        
-        [JsonPropertyName("email")]
-        [EmailAddress]
-        public string Email { get; set; }
     }
 }
