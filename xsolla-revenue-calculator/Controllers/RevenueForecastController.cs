@@ -36,8 +36,10 @@ namespace xsolla_revenue_calculator.Controllers
         {
             if (!ModelState.IsValid) throw new ValidationException(ModelState);
             var userInfo = await _databaseAccessService.LogUserAsync(userInfoDto);
-            var draftForecast = await _revenueForecastService.StartCalculationAsync(userInfo);
-            return Ok(_mapper.Map<RevenueForecastViewModel>(draftForecast));
+            var forecast = await _revenueForecastService.StartCalculationAsync(userInfo);
+            if (!forecast.IsReady)
+                await _databaseAccessService.AttachForecastToUserAsync(userInfo.Id, forecast.Id);
+            return Ok(_mapper.Map<RevenueForecastViewModel>(forecast));
         }
         
         

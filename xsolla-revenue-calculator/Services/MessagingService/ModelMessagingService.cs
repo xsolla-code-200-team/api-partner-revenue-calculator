@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
+using xsolla_revenue_calculator.DTO.MqMessages;
 
-namespace xsolla_revenue_calculator.Services 
+namespace xsolla_revenue_calculator.Services.MessagingService 
 {
     public class ModelMessagingService : IModelMessagingService
     {

@@ -1,6 +1,7 @@
 using System.Linq;
 using AutoMapper;
 using xsolla_revenue_calculator.DTO;
+using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.ViewModels;
 
@@ -18,6 +19,7 @@ namespace xsolla_revenue_calculator.Utilities
             CreateMap<UserInfo, MessageToModel>();
             CreateMap<UserComplexFormDto, UserInfo>();
             CreateMap<UserSimpleFormDto, UserInfo>();
+            CreateMap<UserInfo, CachedUserInfo>();
         }
     }
 }

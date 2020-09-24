@@ -2,7 +2,7 @@ using System;
 using RabbitMQ.Client;
 using xsolla_revenue_calculator.DTO.Configuration;
 
-namespace xsolla_revenue_calculator.Services
+namespace xsolla_revenue_calculator.Services.MessagingService
 {
     public class MqConnectionService : IDisposable, IMqConnectionService
     {

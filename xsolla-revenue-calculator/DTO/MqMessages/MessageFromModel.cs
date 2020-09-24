@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.DTO
+namespace xsolla_revenue_calculator.DTO.MqMessages
 {
     /// <summary>
     /// To use for receiving messages from model via RabbitMQ

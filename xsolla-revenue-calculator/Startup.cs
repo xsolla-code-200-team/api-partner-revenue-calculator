@@ -22,6 +22,8 @@ using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Middlewares;
 using xsolla_revenue_calculator.Services;
+using xsolla_revenue_calculator.Services.CachingService;
+using xsolla_revenue_calculator.Services.MessagingService;
 using xsolla_revenue_calculator.Utilities;
 using ILogger = DnsClient.Internal.ILogger;
 
@@ -61,12 +63,19 @@ namespace xsolla_revenue_calculator
             services.AddSingleton<IRabbitMqConfiguration>(sp =>
                 sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
             
+            services.Configure<RedisConfiguration>(Configuration.GetSection(nameof(RedisConfiguration)));
+            services.AddSingleton<IRedisConfiguration>(sp =>
+                sp.GetRequiredService<IOptions<RedisConfiguration>>().Value);
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
             services.AddSingleton<IMqConnectionService, MqConnectionService>();
             services.AddSingleton<IDatabaseAccessService, MongoDatabaseAccessService>();
             services.AddScoped<IRevenueForecastService, RevenueForecastService>();
             services.AddScoped<IModelMessagingService, ModelMessagingService>();
+            services.AddScoped<IForecastCachingService, ForecastCachingService>();
+            services.AddScoped<IHashingService, HashingService>();
+            services.AddSingleton<IRedisAccessService, RedisAccessService>();
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
