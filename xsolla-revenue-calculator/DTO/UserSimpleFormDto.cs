@@ -12,6 +12,7 @@ namespace xsolla_revenue_calculator.DTO
         public ObjectId Id { get; set; }
         
         [BsonRepresentation(BsonType.String)]
+        [JsonIgnore]
         public ForecastType ForecastType { get; set; } = ForecastType.Absolute;
 
         [JsonPropertyName("productName")]

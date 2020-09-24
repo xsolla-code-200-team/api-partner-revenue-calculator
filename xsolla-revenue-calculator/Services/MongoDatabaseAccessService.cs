@@ -42,21 +42,21 @@ namespace xsolla_revenue_calculator.Services
 
         public async Task<UserInfo> LogUserAsync(UserComplexFormDto userInfoDto)
         {
+            userInfoDto.ForecastType = ForecastType.Absolute;
             var userInfoDoc = userInfoDto.ToBsonDocument();
             await _users.InsertOneAsync(userInfoDoc);
             var userInfoModel = BsonSerializer.Deserialize<UserComplexFormDto>(userInfoDoc);
             var userInfo = _mapper.Map<UserInfo>(userInfoModel);
-            userInfo.ForecastType = ForecastType.Absolute;
             return userInfo;
         }
         
         public async Task<UserInfo> LogUserAsync(UserSimpleFormDto userInfoDto)
         {
+            userInfoDto.ForecastType = ForecastType.Percentage;
             var userInfoDoc = userInfoDto.ToBsonDocument();
             await _users.InsertOneAsync(userInfoDoc);
             var userInfoModel = BsonSerializer.Deserialize<UserSimpleFormDto>(userInfoDoc);
             var userInfo = _mapper.Map<UserInfo>(userInfoModel);
-            userInfo.ForecastType = ForecastType.Percentage;
             return userInfo;
         }
 

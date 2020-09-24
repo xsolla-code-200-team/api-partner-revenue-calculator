@@ -12,7 +12,8 @@ namespace xsolla_revenue_calculator.DTO
     {
         public ObjectId Id { get; set; }
         
-        [BsonRepresentation(BsonType.String)]     
+        [BsonRepresentation(BsonType.String)]
+        [JsonIgnore]
         public ForecastType ForecastType { get; set; } = ForecastType.Percentage;
 
         [JsonPropertyName("productName")]
