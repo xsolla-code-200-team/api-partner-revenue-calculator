@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using xsolla_revenue_calculator.Models;
@@ -10,6 +11,8 @@ namespace xsolla_revenue_calculator.Services.CachingService
         private readonly IHashingService _hashingService;
         private readonly IMapper _mapper;
         private readonly IDatabaseAccessService _databaseAccessService;
+
+        private TimeSpan _cacheExpiryTime = new TimeSpan(1, 0, 0, 0, 0);
 
         public ForecastCachingService(IRedisAccessService accessService, IMapper mapper, IHashingService hashingService, IDatabaseAccessService databaseAccessService)
         {
@@ -38,7 +41,7 @@ namespace xsolla_revenue_calculator.Services.CachingService
             var userInfo = await _databaseAccessService.GetUserInfoByForecastId(forecasts.Id.ToString());
             var cashedUserInfo = _mapper.Map<CachedUserInfo>(userInfo);
             var hash = _hashingService.GetHash(cashedUserInfo);
-            await _accessService.SetAsync(hash, forecasts.Id.ToString());
+            await _accessService.SetAsync(hash, forecasts.Id.ToString(), _cacheExpiryTime);
         }
     }
 

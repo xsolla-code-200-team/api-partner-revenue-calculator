@@ -36,10 +36,10 @@ namespace xsolla_revenue_calculator.Services.CachingService
             return $"{redisUri.Host}:{redisUri.Port}, password={userInfo[1]}";
         }
 
-        public async Task<bool> SetAsync(string key, string value)
+        public async Task<bool> SetAsync(string key, string value, TimeSpan cacheExpiryTime)
         {
             var db = _redis.GetDatabase();
-            return await db.StringSetAsync(key, value);
+            return await db.StringSetAsync(key, value, cacheExpiryTime);
         }
         
         public async Task<string?> GetAsync(string key)
@@ -53,7 +53,7 @@ namespace xsolla_revenue_calculator.Services.CachingService
 
     public interface IRedisAccessService
     {
-        Task<bool> SetAsync(string key, string value);
+        Task<bool> SetAsync(string key, string value, TimeSpan cacheExpiryTime);
         Task<string?> GetAsync(string key);
     }
 }
