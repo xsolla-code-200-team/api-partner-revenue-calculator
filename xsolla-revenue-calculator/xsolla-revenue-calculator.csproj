@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>xsolla_revenue_calculator</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -43,5 +43,7 @@ namespace xsolla_revenue_calculator.Models
         [JsonPropertyName("email")]
         [EmailAddress]
         public string Email { get; set; }
+        
+        public ObjectId RevenueForecastId { get; set; }
     }
 }

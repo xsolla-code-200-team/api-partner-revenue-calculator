@@ -27,8 +27,9 @@ namespace xsolla_revenue_calculator.Services
 
         public async Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo)
         {
-            //var existingForecastId = await _cachingService.GetRevenueForecastIdAsync(userInfo);
-            var draftForecast = await _databaseAccessService.CreateForecastAsync(userInfo);
+            var existingForecast = await _cachingService.GetRevenueForecastAsync(userInfo);
+            if (existingForecast != null) return existingForecast;
+            var draftForecast = await _databaseAccessService.CreateForecastAsync(userInfo.ForecastType);
             var messageToModel = PrepareMessageToModel(userInfo, draftForecast);
             _modelMessagingService.ResponseProcessor = ModelResponseProcessor;
             await _modelMessagingService.SendAsync(messageToModel);
@@ -36,9 +37,10 @@ namespace xsolla_revenue_calculator.Services
         }
         
 
-        private void ModelResponseProcessor(IModelMessagingService sender, MessageFromModel message)
+        private async void ModelResponseProcessor(IModelMessagingService sender, MessageFromModel message)
         {
-            _databaseAccessService.UpdateForecastAsync(message);
+            var forecast = await _databaseAccessService.UpdateForecastAsync(message);
+            await _cachingService.AddForecastToCache(forecast);
             Console.WriteLine(message);
             sender.Dispose();
         }
