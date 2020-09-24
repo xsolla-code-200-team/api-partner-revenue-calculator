@@ -105,7 +105,7 @@ namespace xsolla_revenue_calculator.Services
         {
             var filter = new BsonDocument("RevenueForecastId", new ObjectId(id));
             var userInfoDocuments = await _users.FindAsync(filter);
-            var userInfoDocument = userInfoDocuments.Single();
+            var userInfoDocument = userInfoDocuments.First();
             var userInfo = GetUserInfoFromDocument(userInfoDocument);
             return userInfo;
         }
