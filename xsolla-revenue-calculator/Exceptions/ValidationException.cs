@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace xsolla_revenue_calculator.Exceptions
 {
@@ -27,6 +28,14 @@ namespace xsolla_revenue_calculator.Exceptions
                 }
                 return message;
             }
+        }
+    }
+    
+    public class ValidationExceptionExample : IExamplesProvider<ValidationException>
+    {
+        public ValidationException GetExamples()
+        {
+            return new ValidationException(new ModelStateDictionary());
         }
     }
 }

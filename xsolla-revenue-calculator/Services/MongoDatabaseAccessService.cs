@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.DTO.MqMessages;
+using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Models.ForecastModels;
 using xsolla_revenue_calculator.Models.UserInfoModels;
@@ -100,14 +101,21 @@ namespace xsolla_revenue_calculator.Services
 
         public async Task<RevenueForecasts> GetForecastAsync(string id)
         {
-            return (await _forecasts.FindAsync(forecast => forecast.Id == new ObjectId(id))).Single();
+            var forecastsList = await (
+                                        await _forecasts.FindAsync(forecast => 
+                                            forecast.Id == new ObjectId(id)))
+                                .ToListAsync();
+            if (forecastsList.Count == 0) throw new ItemNotFoundException("RevenueForecasts");
+            return forecastsList.Single();
         }
 
         public async Task<FullUserInfo> GetUserInfoByForecastId(string id)
         {
             var filter = new BsonDocument("RevenueForecastId", new ObjectId(id));
             var userInfoDocuments = await _users.FindAsync(filter);
-            var userInfoDocument = userInfoDocuments.First();
+            var userInfoList = await userInfoDocuments.ToListAsync();
+            if (userInfoList.Count == 0) throw new ItemNotFoundException("UserInfo");
+            var userInfoDocument = userInfoList.First();
             var userInfo = GetUserInfoFromDocument(userInfoDocument);
             return userInfo;
         }

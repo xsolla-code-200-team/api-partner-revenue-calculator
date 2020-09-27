@@ -53,7 +53,60 @@ namespace xsolla_revenue_calculator.Tests
             {
                 Assert.IsType<RevenueForecastViewModel>(objectResult.Value as RevenueForecastViewModel);
             }
-            else Assert.True(false, "failed to receive UserInfo as result");
+            else Assert.True(false, "failed to receive revenue forecast as result");
+        }
+        
+        [Fact]
+        public async void PostUserSimple_Ok()
+        {
+            // Arrange
+            var mockLoggingService = new Mock<IDatabaseAccessService>();
+            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoBaseRequestBody>()))
+                .ReturnsAsync(new FullUserInfo());
+            var mockRevenueForecastService = new Mock<IRevenueForecastService>();
+            mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
+                .ReturnsAsync(new RevenueForecasts());
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            
+            // Act
+            var requestBody = new UserInfoBaseRequestBody
+            {
+                Email = "123"
+            };
+            var result = await controller.PostUserSimpleAsync(requestBody);
+            
+            // Assert
+            if (result is OkObjectResult objectResult)
+            {
+                Assert.IsType<RevenueForecastViewModel>(objectResult.Value as RevenueForecastViewModel);
+            }
+            else Assert.True(false, "failed to receive revenue forecast as result");
+        }
+        
+        public async void GetRevenueForecast_Ok()
+        {
+            // Arrange
+            var mockLoggingService = new Mock<IDatabaseAccessService>();
+            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoBaseRequestBody>()))
+                .ReturnsAsync(new FullUserInfo());
+            var mockRevenueForecastService = new Mock<IRevenueForecastService>();
+            mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
+                .ReturnsAsync(new RevenueForecasts());
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            
+            // Act
+            var requestBody = new UserInfoBaseRequestBody
+            {
+                Email = "123"
+            };
+            var result = await controller.PostUserSimpleAsync(requestBody);
+            
+            // Assert
+            if (result is OkObjectResult objectResult)
+            {
+                Assert.IsType<RevenueForecastViewModel>(objectResult.Value as RevenueForecastViewModel);
+            }
+            else Assert.True(false, "failed to receive revenue forecast as result");
         }
     }
 }

@@ -36,6 +36,7 @@ namespace xsolla_revenue_calculator.Controllers
         /// <response code="200">Returns in case of success</response>
         [HttpPost("Simple")]
         [SwaggerResponse(200, type: typeof(RevenueForecastViewModel))]
+        [SwaggerResponse(400, type: typeof(ExceptionDetails))]
         [SwaggerRequestExample(typeof(UserInfoBaseRequestBody), typeof(UserInfoBaseRequestBodyExample))]
         public async Task<IActionResult> PostUserSimpleAsync([FromBody] UserInfoBaseRequestBody userInfoDto)
         {
@@ -53,6 +54,7 @@ namespace xsolla_revenue_calculator.Controllers
         /// <response code="200">Returns in case of success</response>
         [HttpPost("Complex")]
         [SwaggerResponse(200, type: typeof(RevenueForecastViewModel))]
+        [SwaggerResponse(400, type: typeof(ExceptionDetails))]
         [SwaggerRequestExample(typeof(UserInfoFullRequestBody), typeof(UserInfoFullRequestBodyExample))]
         public async Task<IActionResult> PostUserComplexAsync([FromBody] UserInfoFullRequestBody userInfoDto)
         {
@@ -69,6 +71,7 @@ namespace xsolla_revenue_calculator.Controllers
         /// <param name="id">id of the forecast</param>
         [HttpGet("{id}")]
         [SwaggerResponse(200, type: typeof(RevenueForecastViewModel))]
+        [SwaggerResponse(404, type: typeof(ExceptionDetails))]
         public async Task<IActionResult> GetForecast(string id)
         {
             var forecast = await _databaseAccessService.GetForecastAsync(id);
