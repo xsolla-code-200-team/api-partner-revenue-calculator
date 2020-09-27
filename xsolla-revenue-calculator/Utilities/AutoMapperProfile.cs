@@ -3,7 +3,8 @@ using AutoMapper;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;
-using xsolla_revenue_calculator.ViewModels;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 
 namespace xsolla_revenue_calculator.Utilities
 {
@@ -16,10 +17,10 @@ namespace xsolla_revenue_calculator.Utilities
                     opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(viewModel => viewModel.ForecastType, opt => 
                     opt.MapFrom(src => src.ForecastType.ToString()));
-            CreateMap<UserInfo, MessageToModel>();
-            CreateMap<UserComplexFormDto, UserInfo>();
-            CreateMap<UserSimpleFormDto, UserInfo>();
-            CreateMap<UserInfo, CachedUserInfo>();
+            CreateMap<FullUserInfo, MessageToModel>();
+            CreateMap<UserInfoFullRequestBody, FullUserInfo>();
+            CreateMap<UserInfoBaseRequestBody, FullUserInfo>();
+            CreateMap<FullUserInfo, CachedUserInfo>();
         }
     }
 }

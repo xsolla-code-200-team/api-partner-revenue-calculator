@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.DTO
+namespace xsolla_revenue_calculator.Models.UserInfoModels
 {
-    public class UserSimpleFormDto
+    public class BaseUserInfo
     {
+        [JsonPropertyName("id")]
         public ObjectId Id { get; set; }
         
         [BsonRepresentation(BsonType.String)]
-        [JsonIgnore]
-        public ForecastType ForecastType { get; set; } = ForecastType.Absolute;
+        [JsonPropertyName("forecastType")]
+        public  ForecastType ForecastType { get; set; }
 
         [JsonPropertyName("productName")]
         public string ProductName { get; set; }
@@ -37,6 +37,13 @@ namespace xsolla_revenue_calculator.DTO
         [EmailAddress]
         public string Email { get; set; }
         
+        [JsonPropertyName("revenueForecastId")]
+
         public ObjectId RevenueForecastId { get; set; }
+
+        public virtual bool ShouldSerializeForecastType()
+        {
+            return true;
+        }
     }
 }

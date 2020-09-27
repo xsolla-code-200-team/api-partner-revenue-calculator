@@ -1,9 +1,6 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using xsolla_revenue_calculator.Models;
 
-namespace xsolla_revenue_calculator.ViewModels
+namespace xsolla_revenue_calculator.Models.ForecastModels
 {
     public class RevenueForecastViewModel
     {

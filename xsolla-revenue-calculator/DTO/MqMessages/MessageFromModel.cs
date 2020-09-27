@@ -1,20 +1,17 @@
 using System;
 using System.Collections.Generic;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
 
 namespace xsolla_revenue_calculator.DTO.MqMessages
 {
     /// <summary>
     /// To use for receiving messages from model via RabbitMQ
     /// </summary>
-    public class MessageFromModel
+    public class MessageFromModel : ForecastsInfo
     {
         public string RevenueForecastId { get; set; }
-        
-        public ParticularForecast ChosenForecast { get; set; }
-        
-        public List<ParticularForecast> OtherForecasts { get; set; } 
-    
+
         public override string ToString()
         {
             var result = $"RevenueForecastID: {RevenueForecastId}, ChosenForecast:\n" +

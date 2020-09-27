@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace xsolla_revenue_calculator.Models
+namespace xsolla_revenue_calculator.Models.ForecastModels
 {
     public class ParticularForecast
     {

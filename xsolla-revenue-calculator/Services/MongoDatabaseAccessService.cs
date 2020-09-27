@@ -9,6 +9,8 @@ using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 
 namespace xsolla_revenue_calculator.Services
 {
@@ -40,23 +42,23 @@ namespace xsolla_revenue_calculator.Services
             _users = _database.GetCollection<BsonDocument>(_mongoDbConfiguration.UsersCollection);
         }
 
-        public async Task<UserInfo> LogUserAsync(UserComplexFormDto userInfoDto)
+        public async Task<FullUserInfo> LogUserAsync(UserInfoFullRequestBody userInfoDto)
         {
             userInfoDto.ForecastType = ForecastType.Absolute;
             var userInfoDoc = userInfoDto.ToBsonDocument();
             await _users.InsertOneAsync(userInfoDoc);
-            var userInfoModel = BsonSerializer.Deserialize<UserComplexFormDto>(userInfoDoc);
-            var userInfo = _mapper.Map<UserInfo>(userInfoModel);
+            var userInfoModel = BsonSerializer.Deserialize<UserInfoFullRequestBody>(userInfoDoc);
+            var userInfo = _mapper.Map<FullUserInfo>(userInfoModel);
             return userInfo;
         }
         
-        public async Task<UserInfo> LogUserAsync(UserSimpleFormDto userInfoDto)
+        public async Task<FullUserInfo> LogUserAsync(UserInfoBaseRequestBody userInfoDto)
         {
             userInfoDto.ForecastType = ForecastType.Percentage;
             var userInfoDoc = userInfoDto.ToBsonDocument();
             await _users.InsertOneAsync(userInfoDoc);
-            var userInfoModel = BsonSerializer.Deserialize<UserSimpleFormDto>(userInfoDoc);
-            var userInfo = _mapper.Map<UserInfo>(userInfoModel);
+            var userInfoModel = BsonSerializer.Deserialize<UserInfoBaseRequestBody>(userInfoDoc);
+            var userInfo = _mapper.Map<FullUserInfo>(userInfoModel);
             return userInfo;
         }
 
@@ -67,12 +69,12 @@ namespace xsolla_revenue_calculator.Services
             var result = await _users.UpdateOneAsync(filter, update);
         }
 
-        private UserInfo GetUserInfoFromDocument(BsonDocument document)
+        private FullUserInfo GetUserInfoFromDocument(BsonDocument document)
         {
             var value = document.GetValue("ForecastType");
             return value.AsString == ForecastType.Absolute.ToString() ?
-                _mapper.Map<UserInfo>(BsonSerializer.Deserialize<UserComplexFormDto>(document)) : 
-                _mapper.Map<UserInfo>(BsonSerializer.Deserialize<UserSimpleFormDto>(document));
+                _mapper.Map<FullUserInfo>(BsonSerializer.Deserialize<UserInfoFullRequestBody>(document)) : 
+                _mapper.Map<FullUserInfo>(BsonSerializer.Deserialize<UserInfoBaseRequestBody>(document));
         }
 
         public async Task<RevenueForecasts> CreateForecastAsync(ForecastType forecastType)
@@ -101,7 +103,7 @@ namespace xsolla_revenue_calculator.Services
             return (await _forecasts.FindAsync(forecast => forecast.Id == new ObjectId(id))).Single();
         }
 
-        public async Task<UserInfo> GetUserInfoByForecastId(string id)
+        public async Task<FullUserInfo> GetUserInfoByForecastId(string id)
         {
             var filter = new BsonDocument("RevenueForecastId", new ObjectId(id));
             var userInfoDocuments = await _users.FindAsync(filter);
@@ -113,16 +115,16 @@ namespace xsolla_revenue_calculator.Services
 
     public interface IDatabaseAccessService
     {
-        Task<UserInfo> LogUserAsync(UserComplexFormDto userInfo);
+        Task<FullUserInfo> LogUserAsync(UserInfoFullRequestBody userInfo);
         
-        Task<UserInfo> LogUserAsync(UserSimpleFormDto userInfo);
+        Task<FullUserInfo> LogUserAsync(UserInfoBaseRequestBody userInfo);
 
         Task AttachForecastToUserAsync(ObjectId userId, ObjectId forecastId);
 
         Task<RevenueForecasts> CreateForecastAsync(ForecastType forecastType);
         Task<RevenueForecasts> GetForecastAsync(string id);
         Task<RevenueForecasts> UpdateForecastAsync(MessageFromModel message);
-        Task<UserInfo> GetUserInfoByForecastId(string id);
+        Task<FullUserInfo> GetUserInfoByForecastId(string id);
 
     }
 }

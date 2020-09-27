@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 
 namespace xsolla_revenue_calculator.Services.CachingService
 {

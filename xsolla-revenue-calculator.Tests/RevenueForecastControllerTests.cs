@@ -6,9 +6,10 @@ using Moq;
 using xsolla_revenue_calculator.Controllers;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services;
 using xsolla_revenue_calculator.Utilities;
-using xsolla_revenue_calculator.ViewModels;
 using Xunit;
 using Xunit.Sdk;
 
@@ -33,15 +34,15 @@ namespace xsolla_revenue_calculator.Tests
         {
             // Arrange
             var mockLoggingService = new Mock<IDatabaseAccessService>();
-            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserComplexFormDto>()))
-                .ReturnsAsync(new UserInfo());
+            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoFullRequestBody>()))
+                .ReturnsAsync(new FullUserInfo());
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
-            mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<UserInfo>()))
+            mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
                 .ReturnsAsync(new RevenueForecasts());
             var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
             
             // Act
-            var requestBody = new UserComplexFormDto
+            var requestBody = new UserInfoFullRequestBody
             {
                 Email = "123"
             };

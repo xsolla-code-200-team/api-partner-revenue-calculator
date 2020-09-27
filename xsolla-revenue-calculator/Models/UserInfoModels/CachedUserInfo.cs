@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace xsolla_revenue_calculator.Models
+namespace xsolla_revenue_calculator.Models.UserInfoModels
 {
     public class CachedUserInfo
     {
@@ -45,5 +45,4 @@ namespace xsolla_revenue_calculator.Models
             return HashCode.Combine((int) ForecastType, ReleaseDate, Genres, Monetization, Platforms, Regions, Sales, Cost);
         }
     }
-    
 }

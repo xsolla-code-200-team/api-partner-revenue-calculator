@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 
 namespace xsolla_revenue_calculator.Services.CachingService
 {
@@ -22,9 +24,9 @@ namespace xsolla_revenue_calculator.Services.CachingService
             _databaseAccessService = databaseAccessService;
         }
 
-        public async Task<RevenueForecasts?> GetRevenueForecastAsync(UserInfo userInfo)
+        public async Task<RevenueForecasts?> GetRevenueForecastAsync(FullUserInfo fullUserInfo)
         {
-            var cashedUserInfo = _mapper.Map<CachedUserInfo>(userInfo);
+            var cashedUserInfo = _mapper.Map<CachedUserInfo>(fullUserInfo);
             var hash = _hashingService.GetHash(cashedUserInfo);
             var forecastId = await _accessService.GetAsync(hash);
             if (forecastId == null) return null;
@@ -47,7 +49,7 @@ namespace xsolla_revenue_calculator.Services.CachingService
 
     public interface IForecastCachingService
     {
-        Task<RevenueForecasts?> GetRevenueForecastAsync(UserInfo userInfo);
+        Task<RevenueForecasts?> GetRevenueForecastAsync(FullUserInfo fullUserInfo);
         Task AddForecastToCache(RevenueForecasts forecasts);
     }
 }

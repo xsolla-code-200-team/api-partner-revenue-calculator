@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services;
-using xsolla_revenue_calculator.ViewModels;
 
 namespace xsolla_revenue_calculator.Controllers
 {
@@ -32,7 +33,7 @@ namespace xsolla_revenue_calculator.Controllers
         [HttpPost("Simple")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Produces(typeof(RevenueForecastViewModel))]
-        public async Task<IActionResult> PostUserSimpleAsync([FromBody] UserSimpleFormDto userInfoDto)
+        public async Task<IActionResult> PostUserSimpleAsync([FromBody] UserInfoBaseRequestBody userInfoDto)
         {
             if (!ModelState.IsValid) throw new ValidationException(ModelState);
             var userInfo = await _databaseAccessService.LogUserAsync(userInfoDto);
@@ -49,7 +50,7 @@ namespace xsolla_revenue_calculator.Controllers
         [HttpPost("Complex")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Produces(typeof(RevenueForecastViewModel))]
-        public async Task<IActionResult> PostUserComplexAsync([FromBody] UserComplexFormDto userInfoDto)
+        public async Task<IActionResult> PostUserComplexAsync([FromBody] UserInfoFullRequestBody userInfoDto)
         {
             if (!ModelState.IsValid) throw new ValidationException(ModelState);
             var userInfo = await _databaseAccessService.LogUserAsync(userInfoDto);

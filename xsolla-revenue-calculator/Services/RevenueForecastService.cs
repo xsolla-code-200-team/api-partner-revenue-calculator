@@ -4,6 +4,8 @@ using AutoMapper;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Models.ForecastModels;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services.CachingService;
 using xsolla_revenue_calculator.Services.MessagingService;
 
@@ -25,12 +27,12 @@ namespace xsolla_revenue_calculator.Services
             _cachingService = cachingService;
         }
 
-        public async Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo)
+        public async Task<RevenueForecasts> StartCalculationAsync(FullUserInfo fullUserInfo)
         {
-            var existingForecast = await _cachingService.GetRevenueForecastAsync(userInfo);
+            var existingForecast = await _cachingService.GetRevenueForecastAsync(fullUserInfo);
             if (existingForecast != null) return existingForecast;
-            var draftForecast = await _databaseAccessService.CreateForecastAsync(userInfo.ForecastType);
-            var messageToModel = PrepareMessageToModel(userInfo, draftForecast);
+            var draftForecast = await _databaseAccessService.CreateForecastAsync(fullUserInfo.ForecastType);
+            var messageToModel = PrepareMessageToModel(fullUserInfo, draftForecast);
             _modelMessagingService.ResponseProcessor = ModelResponseProcessor;
             await _modelMessagingService.SendAsync(messageToModel);
             return draftForecast;
@@ -45,9 +47,9 @@ namespace xsolla_revenue_calculator.Services
             sender.Dispose();
         }
         
-        private MessageToModel PrepareMessageToModel(UserInfo userInfo, RevenueForecasts forecast)
+        private MessageToModel PrepareMessageToModel(FullUserInfo fullUserInfo, RevenueForecasts forecast)
         {
-            var messageToModel = _mapper.Map<MessageToModel>(userInfo);
+            var messageToModel = _mapper.Map<MessageToModel>(fullUserInfo);
             messageToModel.ForecastType = forecast.ForecastType.ToString();
             messageToModel.RevenueForecastId = forecast.Id.ToString();
             return messageToModel;
@@ -56,6 +58,6 @@ namespace xsolla_revenue_calculator.Services
     
     public interface IRevenueForecastService
     {
-        Task<RevenueForecasts> StartCalculationAsync(UserInfo userInfo);
+        Task<RevenueForecasts> StartCalculationAsync(FullUserInfo fullUserInfo);
     }
 }
