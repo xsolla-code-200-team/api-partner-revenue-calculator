@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Filters;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Middlewares;
@@ -34,6 +35,7 @@ namespace xsolla_revenue_calculator
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -44,15 +46,18 @@ namespace xsolla_revenue_calculator
             services.AddControllers();
             services.AddSwaggerGen(c => 
                 {
+                    // Enable Swagger examples
                     c.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Version = "v1",
                         Title = "Xsolla Revenue Calculator API",
                         Description = "First sprint version"
                     });
+                    c.ExampleFilters();
                     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     c.IncludeXmlComments(xmlPath);
+                    // Enable Swagger examples
                 }
             ); 
             services.Configure<MongoDbConfiguration>(Configuration.GetSection(nameof(MongoDbConfiguration)));
@@ -80,6 +85,7 @@ namespace xsolla_revenue_calculator
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,13 +8,13 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
 {
     public class BaseUserInfo
     {
-        [JsonPropertyName("id")]
+        [JsonIgnore]
         public ObjectId Id { get; set; }
         
         [BsonRepresentation(BsonType.String)]
-        [JsonPropertyName("forecastType")]
+        [JsonIgnore]
         public  ForecastType ForecastType { get; set; }
-
+        
         [JsonPropertyName("productName")]
         public string ProductName { get; set; }
 
@@ -37,13 +37,8 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
         [EmailAddress]
         public string Email { get; set; }
         
-        [JsonPropertyName("revenueForecastId")]
-
+        [JsonIgnore]
         public ObjectId RevenueForecastId { get; set; }
-
-        public virtual bool ShouldSerializeForecastType()
-        {
-            return true;
-        }
+        
     }
 }
