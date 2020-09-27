@@ -9,10 +9,10 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
         public string ReleaseDate { get; set; }
         
         [JsonPropertyName("sales")]
-        public string Sales { get; set; }
+        public double Sales { get; set; }
         
         [JsonPropertyName("cost")]
-        public string Cost { get; set; }
+        public double Cost { get; set; }
 
     }
 }
