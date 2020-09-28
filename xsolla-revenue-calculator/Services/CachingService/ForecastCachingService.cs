@@ -9,16 +9,16 @@ namespace xsolla_revenue_calculator.Services.CachingService
 {
     public class ForecastCachingService : IForecastCachingService
     {
-        private readonly IRedisAccessService _accessService;
+        private readonly IRedisAccessService _redisAccessService;
         private readonly IHashingService _hashingService;
         private readonly IMapper _mapper;
         private readonly IDatabaseAccessService _databaseAccessService;
 
-        private TimeSpan _cacheExpiryTime = new TimeSpan(1, 0, 0, 0, 0);
+        private readonly TimeSpan _cacheExpiryTime = new TimeSpan(1, 0, 0, 0, 0);
 
-        public ForecastCachingService(IRedisAccessService accessService, IMapper mapper, IHashingService hashingService, IDatabaseAccessService databaseAccessService)
+        public ForecastCachingService(IRedisAccessService redisAccessService, IMapper mapper, IHashingService hashingService, IDatabaseAccessService databaseAccessService)
         {
-            _accessService = accessService;
+            _redisAccessService = redisAccessService;
             _mapper = mapper;
             _hashingService = hashingService;
             _databaseAccessService = databaseAccessService;
@@ -28,7 +28,7 @@ namespace xsolla_revenue_calculator.Services.CachingService
         {
             var cashedUserInfo = _mapper.Map<CachedUserInfo>(fullUserInfo);
             var hash = _hashingService.GetHash(cashedUserInfo);
-            var forecastId = await _accessService.GetAsync(hash);
+            var forecastId = await _redisAccessService.GetAsync(await hash);
             if (forecastId == null) return null;
             
             var actualUserInfo = await _databaseAccessService.GetUserInfoByForecastId(forecastId);
@@ -38,18 +38,18 @@ namespace xsolla_revenue_calculator.Services.CachingService
             return null;
         }
 
-        public async Task AddForecastToCache(RevenueForecasts forecasts)
+        public async Task AddForecastToCacheAsync(RevenueForecasts forecasts)
         {
             var userInfo = await _databaseAccessService.GetUserInfoByForecastId(forecasts.Id.ToString());
             var cashedUserInfo = _mapper.Map<CachedUserInfo>(userInfo);
             var hash = _hashingService.GetHash(cashedUserInfo);
-            await _accessService.SetAsync(hash, forecasts.Id.ToString(), _cacheExpiryTime);
+            await _redisAccessService.SetAsync(await hash, forecasts.Id.ToString(), _cacheExpiryTime);
         }
     }
 
     public interface IForecastCachingService
     {
         Task<RevenueForecasts?> GetRevenueForecastAsync(FullUserInfo fullUserInfo);
-        Task AddForecastToCache(RevenueForecasts forecasts);
+        Task AddForecastToCacheAsync(RevenueForecasts forecasts);
     }
 }

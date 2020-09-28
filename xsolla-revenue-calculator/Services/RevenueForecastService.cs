@@ -42,7 +42,7 @@ namespace xsolla_revenue_calculator.Services
         private async void ModelResponseProcessor(IModelMessagingService sender, MessageFromModel message)
         {
             var forecast = await _databaseAccessService.UpdateForecastAsync(message);
-            await _cachingService.AddForecastToCache(forecast);
+            await _cachingService.AddForecastToCacheAsync(forecast);
             Console.WriteLine(message);
             sender.Dispose();
         }
