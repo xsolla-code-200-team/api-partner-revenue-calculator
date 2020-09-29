@@ -14,6 +14,9 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
         [JsonPropertyName("cost")]
         public double Cost { get; set; }
         
+        [JsonPropertyName("initialRevenue")]
+        public double InitialRevenue { get; set; }
+        
         [JsonPropertyName("isReleased")]
         public bool IsReleased { get; set; }
     }

@@ -8,7 +8,7 @@ namespace xsolla_revenue_calculator.DTO.MqMessages
     /// <summary>
     /// To use for receiving messages from model via RabbitMQ
     /// </summary>
-    public class MessageFromModel : ForecastsInfo
+    public class ForecastFromModel : ForecastsInfo
     {
         public string RevenueForecastId { get; set; }
 

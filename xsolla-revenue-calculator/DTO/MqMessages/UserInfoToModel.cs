@@ -9,13 +9,12 @@ namespace xsolla_revenue_calculator.DTO.MqMessages
     /// <summary>
     /// To use for sending messages to model via RabbitMQ
     /// </summary>
-    public class MessageToModel : FullUserInfo
+    public class UserInfoToModel : FullUserInfo
     {
         public string ForecastType { get; set; }
 
         [JsonPropertyName("revenueForecastID")]
         public new string RevenueForecastId { get; set; }
-
         
     }
 }

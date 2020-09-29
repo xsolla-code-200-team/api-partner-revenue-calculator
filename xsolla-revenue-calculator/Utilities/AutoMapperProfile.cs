@@ -17,7 +17,7 @@ namespace xsolla_revenue_calculator.Utilities
                     opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(viewModel => viewModel.ForecastType, opt => 
                     opt.MapFrom(src => src.ForecastType.ToString()));
-            CreateMap<FullUserInfo, MessageToModel>();
+            CreateMap<FullUserInfo, UserInfoToModel>();
             CreateMap<UserInfoFullRequestBody, FullUserInfo>();
             CreateMap<UserInfoBaseRequestBody, FullUserInfo>();
             CreateMap<FullUserInfo, CachedUserInfo>();

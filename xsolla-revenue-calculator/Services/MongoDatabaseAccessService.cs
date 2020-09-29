@@ -89,7 +89,7 @@ namespace xsolla_revenue_calculator.Services
             return forecast;
         }
 
-        public async Task<RevenueForecasts> UpdateForecastAsync(MessageFromModel message)
+        public async Task<RevenueForecasts> UpdateForecastAsync(ForecastFromModel? message)
         {
             var forecast = (await _forecasts.FindAsync(f => f.Id == new ObjectId(message.RevenueForecastId))).Single();
             forecast.ChosenForecast = message.ChosenForecast;
@@ -131,7 +131,7 @@ namespace xsolla_revenue_calculator.Services
 
         Task<RevenueForecasts> CreateForecastAsync(ForecastType forecastType);
         Task<RevenueForecasts> GetForecastAsync(string id);
-        Task<RevenueForecasts> UpdateForecastAsync(MessageFromModel message);
+        Task<RevenueForecasts> UpdateForecastAsync(ForecastFromModel? message);
         Task<FullUserInfo> GetUserInfoByForecastId(string id);
 
     }

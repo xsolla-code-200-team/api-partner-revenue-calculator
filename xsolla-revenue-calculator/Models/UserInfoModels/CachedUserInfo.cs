@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using xsolla_revenue_calculator.Models.ForecastModels;
 
 namespace xsolla_revenue_calculator.Models.UserInfoModels
 {

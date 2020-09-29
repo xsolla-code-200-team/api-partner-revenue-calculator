@@ -18,25 +18,24 @@ namespace xsolla_revenue_calculator.Services.MessagingService
         private string _routingKey;
         private string _responseQueue;
         private string _responseRoutingKey;
-        public Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
+        public Action<IModelMessagingService, object> ResponseProcessor { get; set; }
 
         public ModelMessagingService(IRabbitMqConfiguration rabbitMqConfiguration, IMqConnectionService connectionService)
         {
             _rabbitMqConfiguration = rabbitMqConfiguration;
             _connectionService = connectionService;
-            ConfigureParameters();
             InitializeExchange();
         }
         
-        private void ConfigureParameters()
+        private void ConfigureParameters(RpcConnectionConfiguration configuration)
         {
-            _exchangeName = _rabbitMqConfiguration.Exchange;
-            _routingKey = _rabbitMqConfiguration.RoutingKey;
-            _responseQueue = _rabbitMqConfiguration.ResponseQueue;
-            _responseRoutingKey = _rabbitMqConfiguration.ResponseRoutingKeyBase;
+            _routingKey = configuration.RoutingKey;
+            _responseQueue = configuration.ResponseQueue;
+            _responseRoutingKey = configuration.ResponseRoutingKey;
         }
         private void InitializeExchange()
         {
+            _exchangeName = _rabbitMqConfiguration.Exchange;
             _connectionService.Channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
         }
 
@@ -59,9 +58,11 @@ namespace xsolla_revenue_calculator.Services.MessagingService
             _connectionService.Channel.QueueDelete(_responseQueue);
         }
         
-        public async Task SendAsync(MessageToModel message)
+        public async Task SendAsync(RpcConnectionConfiguration configuration, object message)
         {
-            _responseRoutingKey += $"-{message.RevenueForecastId}";
+            ConfigureParameters(configuration);
+            if (message is UserInfoToModel model)
+                _responseRoutingKey += $"-{model.RevenueForecastId}";
             InitializeResponseQueue();
             await Task.Run(
                 () =>
@@ -69,15 +70,15 @@ namespace xsolla_revenue_calculator.Services.MessagingService
                     Console.WriteLine(JsonConvert.SerializeObject(message));
                     var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
                     _connectionService.Channel.BasicPublish(_exchangeName, _routingKey, null, body);
-                    Console.WriteLine(" [x] Sent {0}", message.RevenueForecastId);
+                    Console.WriteLine(" [x] Sent {0}", message);
                 }
             );
         }
 
-        private MessageFromModel GetMessageFromModel(BasicDeliverEventArgs args)
+        private ForecastFromModel GetMessageFromModel(BasicDeliverEventArgs args)
         {
             var messageString = Encoding.UTF8.GetString(args.Body.ToArray());
-            return JsonConvert.DeserializeObject<MessageFromModel>(messageString);
+            return JsonConvert.DeserializeObject<ForecastFromModel>(messageString);
         }
         
         public void Dispose()
@@ -88,8 +89,8 @@ namespace xsolla_revenue_calculator.Services.MessagingService
     
     public interface IModelMessagingService
     {
-        Task SendAsync(MessageToModel message);
-        Action<IModelMessagingService, MessageFromModel> ResponseProcessor { get; set; }
+        Task SendAsync(RpcConnectionConfiguration configuration, object message);
+        Action<IModelMessagingService, object> ResponseProcessor { get; set; }
 
         void Dispose();
     }
