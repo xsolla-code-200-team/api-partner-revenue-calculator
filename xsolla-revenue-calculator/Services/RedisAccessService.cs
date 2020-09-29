@@ -42,6 +42,12 @@ namespace xsolla_revenue_calculator.Services.CachingService
             return await db.StringSetAsync(key, value, cacheExpiryTime);
         }
         
+        public async Task<bool> SetAsync(string key, string value)
+        {
+            var db = _redis.GetDatabase();
+            return await db.StringSetAsync(key, value);
+        }
+        
         public async Task<string?> GetAsync(string key)
         {
             var db = _redis.GetDatabase();
@@ -53,6 +59,7 @@ namespace xsolla_revenue_calculator.Services.CachingService
 
     public interface IRedisAccessService
     {
+        Task<bool> SetAsync(string key, string value);
         Task<bool> SetAsync(string key, string value, TimeSpan cacheExpiryTime);
         Task<string?> GetAsync(string key);
     }
