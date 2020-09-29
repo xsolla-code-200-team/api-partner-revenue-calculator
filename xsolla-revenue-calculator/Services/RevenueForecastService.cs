@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
+using Newtonsoft.Json;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.DTO.MqMessages;
@@ -45,7 +46,8 @@ namespace xsolla_revenue_calculator.Services
 
         private async void ModelResponseProcessor(IModelMessagingService sender, object message)
         {
-            var forecast = await _databaseAccessService.UpdateForecastAsync(message as ForecastFromModel);
+            var forecastFromModel = JsonConvert.DeserializeObject<ForecastFromModel>((string)message);
+            var forecast = await _databaseAccessService.UpdateForecastAsync(forecastFromModel);
             await _cachingService.AddForecastToCacheAsync(forecast);
             Console.WriteLine(message);
             sender.Dispose();

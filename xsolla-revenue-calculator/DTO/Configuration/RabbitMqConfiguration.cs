@@ -3,8 +3,6 @@ namespace xsolla_revenue_calculator.DTO.Configuration
     public class RabbitMqConfiguration : IRabbitMqConfiguration
     {
         public string Host { get; set; }
-        public string Exchange { get; set; }
-
         public RpcConnectionConfiguration ForecastRpcConfiguration { get; set; }
 
         public RpcConnectionConfiguration StaticInfoRpcConfiguration { get; set; }
@@ -13,7 +11,6 @@ namespace xsolla_revenue_calculator.DTO.Configuration
     public interface IRabbitMqConfiguration
     {
         public string Host { get; set; }
-        public string Exchange { get; set; }
         
         public RpcConnectionConfiguration ForecastRpcConfiguration { get; set; }
 
@@ -22,6 +19,7 @@ namespace xsolla_revenue_calculator.DTO.Configuration
 
     public class RpcConnectionConfiguration
     {
+        public string Exchange { get; set; }
         public string RoutingKey { get; set; }
         
         public string ResponseQueue { get; set; }

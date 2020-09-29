@@ -24,18 +24,17 @@ namespace xsolla_revenue_calculator.Services.MessagingService
         {
             _rabbitMqConfiguration = rabbitMqConfiguration;
             _connectionService = connectionService;
-            InitializeExchange();
         }
         
         private void ConfigureParameters(RpcConnectionConfiguration configuration)
         {
+            _exchangeName = configuration.Exchange;
             _routingKey = configuration.RoutingKey;
             _responseQueue = configuration.ResponseQueue;
             _responseRoutingKey = configuration.ResponseRoutingKey;
         }
-        private void InitializeExchange()
+        private void InitializeExchanges()
         {
-            _exchangeName = _rabbitMqConfiguration.Exchange;
             _connectionService.Channel.ExchangeDeclare(_exchangeName, ExchangeType.Direct);
         }
 
@@ -61,8 +60,9 @@ namespace xsolla_revenue_calculator.Services.MessagingService
         public async Task SendAsync(RpcConnectionConfiguration configuration, object message)
         {
             ConfigureParameters(configuration);
+            InitializeExchanges();
             if (message is UserInfoToModel model)
-                _responseRoutingKey += $"-{model.RevenueForecastId}";
+                _responseRoutingKey = "";
             InitializeResponseQueue();
             await Task.Run(
                 () =>
@@ -75,10 +75,10 @@ namespace xsolla_revenue_calculator.Services.MessagingService
             );
         }
 
-        private ForecastFromModel GetMessageFromModel(BasicDeliverEventArgs args)
+        private string GetMessageFromModel(BasicDeliverEventArgs args)
         {
             var messageString = Encoding.UTF8.GetString(args.Body.ToArray());
-            return JsonConvert.DeserializeObject<ForecastFromModel>(messageString);
+            return messageString;
         }
         
         public void Dispose()

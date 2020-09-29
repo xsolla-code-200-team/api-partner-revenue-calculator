@@ -35,7 +35,6 @@ namespace xsolla_revenue_calculator
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            
         }
 
         public IConfiguration Configuration { get; }
@@ -81,6 +80,7 @@ namespace xsolla_revenue_calculator
             services.AddScoped<IForecastCachingService, ForecastCachingService>();
             services.AddScoped<IHashingService, HashingService>();
             services.AddSingleton<IRedisAccessService, RedisAccessService>();
+            services.AddScoped<IStaticAnalyticsService, StaticAnalyticsService>();
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
@@ -89,7 +89,7 @@ namespace xsolla_revenue_calculator
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStaticAnalyticsService staticAnalyticsService)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             app.UseExceptionHandler(new ExceptionHandlerOptions
@@ -114,6 +114,8 @@ namespace xsolla_revenue_calculator
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            staticAnalyticsService.RequestStaticAnalytics();
         }
     }
 }
