@@ -62,7 +62,7 @@ namespace xsolla_revenue_calculator.Services.MessagingService
             ConfigureParameters(configuration);
             InitializeExchanges();
             if (message is UserInfoToModel model)
-                _responseRoutingKey = "";
+                _responseRoutingKey += $"-{model.RevenueForecastId}";
             InitializeResponseQueue();
             await Task.Run(
                 () =>
