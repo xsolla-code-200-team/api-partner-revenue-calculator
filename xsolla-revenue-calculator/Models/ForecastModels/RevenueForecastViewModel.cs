@@ -27,14 +27,16 @@ namespace xsolla_revenue_calculator.Models.ForecastModels
                 ChosenForecast = new ParticularForecast
                 {
                     Monetization = "free2play",
-                    Forecast = new List<double> {0.1, 0.2, 0.3, 0.4, 0.5, 0.6}
+                    TendencyForecast = new List<double> {0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
+                    CumulativeForecast = new List<double> {0.1, 0.3, 0.6, 1.1, 1.7}
                 },
                 OtherForecasts = new List<ParticularForecast>
                 {
                     new ParticularForecast
                     {
                         Monetization = "pay2play",
-                        Forecast = new List<double> {0.2, 0.3, 0.4, 0.5, 0.6, 0.7}
+                        TendencyForecast = new List<double> {0.2, 0.3, 0.4, 0.5, 0.6},
+                        CumulativeForecast = new List<double> {0.2, 0.5, 0.9, 1.4, 2.0}
                     }
                 },
             };
