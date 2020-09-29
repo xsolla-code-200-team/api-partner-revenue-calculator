@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using xsolla_revenue_calculator.Controllers.Requests;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models;
@@ -77,5 +78,15 @@ namespace xsolla_revenue_calculator.Controllers
             var forecast = await _databaseAccessService.GetForecastAsync(id);
             return Ok(_mapper.Map<RevenueForecastViewModel>(forecast));
         }
+        
+        /// <summary>
+        /// Sending email with content as a body
+        /// </summary>
+        [HttpPost("Export")]
+        public async Task<IActionResult> ExportHtml([FromBody] ExportRequestBody requestBody)
+        {
+            return Ok(requestBody);
+        }
+
     }
 }

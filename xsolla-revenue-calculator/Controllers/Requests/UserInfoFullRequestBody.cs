@@ -1,8 +1,8 @@
-
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Filters;
+using xsolla_revenue_calculator.Models.UserInfoModels;
 
-namespace xsolla_revenue_calculator.Models.UserInfoModels
+namespace xsolla_revenue_calculator.Controllers.Requests
 {
     public class UserInfoFullRequestBody : FullUserInfo
     {

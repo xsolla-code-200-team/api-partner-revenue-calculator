@@ -1,5 +1,6 @@
 using System.Linq;
 using AutoMapper;
+using xsolla_revenue_calculator.Controllers.Requests;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.MqMessages;
 using xsolla_revenue_calculator.Models;

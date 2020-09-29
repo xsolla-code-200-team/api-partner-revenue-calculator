@@ -5,6 +5,7 @@ using AutoMapper;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using xsolla_revenue_calculator.Controllers.Requests;
 using xsolla_revenue_calculator.DTO;
 using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.DTO.MqMessages;

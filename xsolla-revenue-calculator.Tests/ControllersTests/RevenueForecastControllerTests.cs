@@ -1,19 +1,17 @@
-using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using xsolla_revenue_calculator.Controllers;
-using xsolla_revenue_calculator.DTO;
-using xsolla_revenue_calculator.Models;
+using xsolla_revenue_calculator.Controllers.Requests;
+using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models.ForecastModels;
 using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services;
 using xsolla_revenue_calculator.Utilities;
 using Xunit;
-using Xunit.Sdk;
 
-namespace xsolla_revenue_calculator.Tests
+namespace xsolla_revenue_calculator.Tests.ControllersTests
 {
     public class RevenueForecastControllerTests
     {
@@ -82,24 +80,19 @@ namespace xsolla_revenue_calculator.Tests
             }
             else Assert.True(false, "failed to receive revenue forecast as result");
         }
-        
+
+        [Fact]
         public async void GetRevenueForecast_Ok()
         {
             // Arrange
             var mockLoggingService = new Mock<IDatabaseAccessService>();
-            mockLoggingService.Setup(service => service.LogUserAsync(It.IsAny<UserInfoBaseRequestBody>()))
-                .ReturnsAsync(new FullUserInfo());
-            var mockRevenueForecastService = new Mock<IRevenueForecastService>();
-            mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
+            mockLoggingService.Setup(service => service.GetForecastAsync(It.IsAny<string>()))
                 .ReturnsAsync(new RevenueForecasts());
+            var mockRevenueForecastService = new Mock<IRevenueForecastService>();
             var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
             
             // Act
-            var requestBody = new UserInfoBaseRequestBody
-            {
-                Email = "123"
-            };
-            var result = await controller.PostUserSimpleAsync(requestBody);
+            var result = await controller.GetForecast("123");
             
             // Assert
             if (result is OkObjectResult objectResult)
@@ -107,6 +100,21 @@ namespace xsolla_revenue_calculator.Tests
                 Assert.IsType<RevenueForecastViewModel>(objectResult.Value as RevenueForecastViewModel);
             }
             else Assert.True(false, "failed to receive revenue forecast as result");
+        }
+        
+        [Fact]
+        public async Task GetRevenueForecast_NotFound()
+        {
+            // Arrange
+            var mockLoggingService = new Mock<IDatabaseAccessService>();
+            mockLoggingService.Setup(service => service.GetForecastAsync(It.IsAny<string>()))
+                .Throws(new ItemNotFoundException("Entity"));
+            var mockRevenueForecastService = new Mock<IRevenueForecastService>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ItemNotFoundException>(() => controller.GetForecast("123"));
+
         }
     }
 }
