@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using xsolla_revenue_calculator.Models.ForecastModels;
 
 namespace xsolla_revenue_calculator.Models.UserInfoModels
@@ -19,9 +20,11 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
         
         public List<string> Regions { get; set; }
         
-        public string Sales { get; set; }
+        [JsonPropertyName("initialRevenue")]
+        public double InitialRevenue { get; set; }
         
-        public string Cost { get; set; }
+        [JsonPropertyName("isReleased")]
+        public bool IsReleased { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -38,12 +41,12 @@ namespace xsolla_revenue_calculator.Models.UserInfoModels
 
         private bool Equals(CachedUserInfo other)
         {
-            return ForecastType == other.ForecastType && ReleaseDate == other.ReleaseDate && Genres.SequenceEqual(other.Genres) && Monetization == other.Monetization && Platforms.SequenceEqual(other.Platforms) && Regions.SequenceEqual(other.Regions) && Sales == other.Sales && Cost == other.Cost;
+            return ForecastType == other.ForecastType && ReleaseDate == other.ReleaseDate && Genres.SequenceEqual(other.Genres) && Monetization == other.Monetization && Platforms.SequenceEqual(other.Platforms) && Regions.SequenceEqual(other.Regions) && InitialRevenue == other.InitialRevenue && IsReleased == other.IsReleased;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine((int) ForecastType, ReleaseDate, Genres, Monetization, Platforms, Regions, Sales, Cost);
+            return HashCode.Combine((int) ForecastType, ReleaseDate, Genres, Monetization, Platforms, Regions, InitialRevenue, IsReleased);
         }
     }
 }

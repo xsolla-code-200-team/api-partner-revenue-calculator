@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -85,6 +87,22 @@ namespace xsolla_revenue_calculator.Controllers
         [HttpPost("Export")]
         public async Task<IActionResult> ExportHtml([FromBody] ExportRequestBody requestBody)
         {
+            string chartConfig = @"";
+            string chartUrl = "https://quickchart.io/chart?width=500&height=200&chart=" + Uri.EscapeDataString(chartConfig);
+            string message = $"Hello, please see the chart below:<br><br><img src=\"{chartUrl}\">";
+            var smtp = new SmtpClient
+            {
+                Port = 587,
+                Host = "smtp.gmail.com",
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential("gamekeysxs@gmail.com", "XS1234567"),
+                DeliveryMethod = SmtpDeliveryMethod.Network
+            };
+            var msg = new MailMessage("gamekeysxs@gmail.com",
+                "neustroev.arseny@gmail.com", "Message from PSSP System",
+                message) {IsBodyHtml = true};
+            smtp.Send(msg);
             return Ok(requestBody);
         }
 

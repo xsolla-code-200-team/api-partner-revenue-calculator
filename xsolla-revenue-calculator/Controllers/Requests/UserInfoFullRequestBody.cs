@@ -22,8 +22,7 @@ namespace xsolla_revenue_calculator.Controllers.Requests
                 Regions = new List<string> {"1", "10"},
                 CompanyName = "Super developer",
                 Email = "super-developer@email.com",
-                Cost = 100000,
-                Sales = 50,
+                InitialRevenue = 50,
                 ReleaseDate = "april-june"
             };
         }
