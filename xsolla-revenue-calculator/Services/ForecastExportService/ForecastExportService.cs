@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -23,18 +24,19 @@ namespace xsolla_revenue_calculator.Services.ForecastExportService
         public async Task ExportForecast(ExportRequestBody requestBody)
         {
             var chartUrls = _chartService.GetChartUrl(await _databaseAccessService.GetForecastAsync(requestBody.RevenueForecastId));
-            var message = FormatMessage(chartUrls);
-            await _mailingService.SendMessageAsync(message, requestBody.Email);
+            var message = GetHtmlMessage(await chartUrls);
+            await _mailingService.SendMessageAsync(await message, requestBody.Email);
         }
 
-        private string FormatMessage(List<Tuple<string, string>> chartUrls)
+        private async Task<string> GetHtmlMessage(List<Tuple<string, string>> chartUrls)
         {
-            string message = $"<h2>Hello, please see the charts below:</h2><br><br>";
+            using var reader = new StreamReader(@"Properties/Assets/Message.html");
+            var html = await reader.ReadToEndAsync();
             foreach (var chartUrl in chartUrls)
             {
-                message += $"<h3>{chartUrl.Item1}</h3><br><img src=\"{chartUrl.Item2}\">";
+                html = html.Replace('{'+chartUrl.Item1+'}', chartUrl.Item2);
             }
-            return message;
+            return html;
         }
     }
 

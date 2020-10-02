@@ -21,5 +21,17 @@
       <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.0" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="Properties\Assets\ChartConfig.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      </Content>
+      <None Remove="Properties\Assets\Message.html" />
+      <Content Include="Properties\Assets\Message.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
     
 </Project>
