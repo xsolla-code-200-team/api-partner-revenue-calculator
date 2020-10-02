@@ -15,6 +15,7 @@ using xsolla_revenue_calculator.Models;
 using xsolla_revenue_calculator.Models.ForecastModels;
 using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services;
+using xsolla_revenue_calculator.Services.ForecastExportService;
 
 namespace xsolla_revenue_calculator.Controllers
 {
@@ -24,13 +25,15 @@ namespace xsolla_revenue_calculator.Controllers
     {
         private readonly IDatabaseAccessService _databaseAccessService;
         private readonly IRevenueForecastService _revenueForecastService;
+        private readonly IForecastExportService _exportService;
         private readonly IMapper _mapper;
 
-        public RevenueForecastController(IDatabaseAccessService databaseAccessService, IRevenueForecastService revenueForecastService, IMapper mapper)
+        public RevenueForecastController(IDatabaseAccessService databaseAccessService, IRevenueForecastService revenueForecastService, IMapper mapper, IForecastExportService exportService)
         {
             _databaseAccessService = databaseAccessService;
             _revenueForecastService = revenueForecastService;
             _mapper = mapper;
+            _exportService = exportService;
         }
 
         /// <summary>
@@ -87,24 +90,8 @@ namespace xsolla_revenue_calculator.Controllers
         [HttpPost("Export")]
         public async Task<IActionResult> ExportHtml([FromBody] ExportRequestBody requestBody)
         {
-            string chartConfig = @"";
-            string chartUrl = "https://quickchart.io/chart?width=500&height=200&chart=" + Uri.EscapeDataString(chartConfig);
-            string message = $"Hello, please see the chart below:<br><br><img src=\"{chartUrl}\">";
-            var smtp = new SmtpClient
-            {
-                Port = 587,
-                Host = "smtp.gmail.com",
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("gamekeysxs@gmail.com", "XS1234567"),
-                DeliveryMethod = SmtpDeliveryMethod.Network
-            };
-            var msg = new MailMessage("gamekeysxs@gmail.com",
-                "neustroev.arseny@gmail.com", "Message from PSSP System",
-                message) {IsBodyHtml = true};
-            smtp.Send(msg);
+            await _exportService.ExportForecast(requestBody);
             return Ok(requestBody);
         }
-
     }
 }

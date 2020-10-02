@@ -24,6 +24,7 @@ using xsolla_revenue_calculator.DTO.Configuration;
 using xsolla_revenue_calculator.Middlewares;
 using xsolla_revenue_calculator.Services;
 using xsolla_revenue_calculator.Services.CachingService;
+using xsolla_revenue_calculator.Services.ForecastExportService;
 using xsolla_revenue_calculator.Services.MessagingService;
 using xsolla_revenue_calculator.Utilities;
 using ILogger = DnsClient.Internal.ILogger;
@@ -39,7 +40,6 @@ namespace xsolla_revenue_calculator
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -49,16 +49,45 @@ namespace xsolla_revenue_calculator
                     c.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Version = "v1",
-                        Title = "Xsolla Revenue Calculator API",
-                        Description = "First sprint version"
+                        Title = "Xsolla Revenue Calculator API"
                     });
                     c.ExampleFilters();
                     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     c.IncludeXmlComments(xmlPath);
-                    // Enable Swagger examples
                 }
             ); 
+            
+            InitializeConfigurationDto(services);
+            InitializeSingletons(services);
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
+            
+            services.AddScoped<IRevenueForecastService, RevenueForecastService>();
+            services.AddScoped<IModelMessagingService, ModelMessagingService>();
+            services.AddScoped<IForecastCachingService, ForecastCachingService>();
+            services.AddScoped<IHashingService, HashingService>();
+            services.AddScoped<IForecastExportService, ForecastExportService>();
+            services.AddScoped<IChartService, ChartService>();
+            services.AddScoped<IStaticAnalyticsService, StaticAnalyticsService>();
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+        }
+
+        private void InitializeSingletons(IServiceCollection services)
+        {
+            services.AddSingleton<IMqConnectionService, MqConnectionService>();
+            services.AddSingleton<IDatabaseAccessService, MongoDatabaseAccessService>();   
+            services.AddSingleton<IRedisAccessService, RedisAccessService>();
+            services.AddSingleton<IMailingService, MailingService>();
+        }
+
+        private void InitializeConfigurationDto(IServiceCollection services)
+        {
             services.Configure<MongoDbConfiguration>(Configuration.GetSection(nameof(MongoDbConfiguration)));
             services.AddSingleton<IMongoDbConfiguration>(sp =>
                 sp.GetRequiredService<IOptions<MongoDbConfiguration>>().Value);
@@ -71,24 +100,11 @@ namespace xsolla_revenue_calculator
             services.AddSingleton<IRedisConfiguration>(sp =>
                 sp.GetRequiredService<IOptions<RedisConfiguration>>().Value);
             
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            
-            services.AddSingleton<IMqConnectionService, MqConnectionService>();
-            services.AddSingleton<IDatabaseAccessService, MongoDatabaseAccessService>();
-            services.AddScoped<IRevenueForecastService, RevenueForecastService>();
-            services.AddScoped<IModelMessagingService, ModelMessagingService>();
-            services.AddScoped<IForecastCachingService, ForecastCachingService>();
-            services.AddScoped<IHashingService, HashingService>();
-            services.AddSingleton<IRedisAccessService, RedisAccessService>();
-            services.AddScoped<IStaticAnalyticsService, StaticAnalyticsService>();
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+            services.Configure<MailingServiceConfiguration>(Configuration.GetSection(nameof(MailingServiceConfiguration)));
+            services.AddSingleton<IMailingServiceConfiguration>(sp =>
+                sp.GetRequiredService<IOptions<MailingServiceConfiguration>>().Value);        
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStaticAnalyticsService staticAnalyticsService)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
