@@ -9,9 +9,6 @@ namespace xsolla_revenue_calculator.Services.ForecastExportService
     {
         private readonly IMailingServiceConfiguration _mailingServiceConfiguration;
         private SmtpClient _client;
-
-        private string _messageSubject = "Your potential revenue report";
-        private string _messageFrom = "Xsolla Partner Calculator";
         
         public MailingService(IMailingServiceConfiguration mailingServiceConfiguration)
         {
@@ -32,10 +29,15 @@ namespace xsolla_revenue_calculator.Services.ForecastExportService
         }
         public async Task SendMessageAsync(string messageBody, string email)
         {
-            var message = new MailMessage(_messageFrom,
-                email, _messageSubject,
-                messageBody) {IsBodyHtml = true}; 
-            await Task.Run(() => _client.Send(message));;
+            var from = new MailAddress(_mailingServiceConfiguration.Username, _mailingServiceConfiguration.Sign);
+            var to = new MailAddress(email, email);
+            var message = new MailMessage(from, to)
+            {
+                Subject = _mailingServiceConfiguration.MessageSubject, 
+                Body = messageBody, 
+                IsBodyHtml = true
+            };
+            await Task.Run(() => _client.Send(message));
         }
     }
 
