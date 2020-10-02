@@ -8,6 +8,7 @@ using xsolla_revenue_calculator.Exceptions;
 using xsolla_revenue_calculator.Models.ForecastModels;
 using xsolla_revenue_calculator.Models.UserInfoModels;
 using xsolla_revenue_calculator.Services;
+using xsolla_revenue_calculator.Services.ForecastExportService;
 using xsolla_revenue_calculator.Utilities;
 using Xunit;
 
@@ -37,7 +38,8 @@ namespace xsolla_revenue_calculator.Tests.ControllersTests
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
             mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
                 .ReturnsAsync(new RevenueForecasts());
-            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            var mockExportService = new Mock<IForecastExportService>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper, mockExportService.Object);
             
             // Act
             var requestBody = new UserInfoFullRequestBody
@@ -64,7 +66,8 @@ namespace xsolla_revenue_calculator.Tests.ControllersTests
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
             mockRevenueForecastService.Setup(service => service.StartCalculationAsync(It.IsAny<FullUserInfo>()))
                 .ReturnsAsync(new RevenueForecasts());
-            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            var mockExportService = new Mock<IForecastExportService>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper, mockExportService.Object);
             
             // Act
             var requestBody = new UserInfoBaseRequestBody
@@ -89,7 +92,8 @@ namespace xsolla_revenue_calculator.Tests.ControllersTests
             mockLoggingService.Setup(service => service.GetForecastAsync(It.IsAny<string>()))
                 .ReturnsAsync(new RevenueForecasts());
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
-            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            var mockExportService = new Mock<IForecastExportService>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper, mockExportService.Object);
             
             // Act
             var result = await controller.GetForecast("123");
@@ -110,7 +114,8 @@ namespace xsolla_revenue_calculator.Tests.ControllersTests
             mockLoggingService.Setup(service => service.GetForecastAsync(It.IsAny<string>()))
                 .Throws(new ItemNotFoundException("Entity"));
             var mockRevenueForecastService = new Mock<IRevenueForecastService>();
-            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper);
+            var mockExportService = new Mock<IForecastExportService>();
+            var controller = new RevenueForecastController(mockLoggingService.Object, mockRevenueForecastService.Object, _mapper,  mockExportService.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<ItemNotFoundException>(() => controller.GetForecast("123"));
