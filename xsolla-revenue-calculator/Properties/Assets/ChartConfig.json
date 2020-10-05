@@ -1,0 +1,49 @@
+{
+  "type":"line",
+  "data":{
+    "labels":"{yAxisLabels}",
+    "datasets":[
+      {
+        "label":"{chosenForecastLabel}",
+        "backgroundColor":"rgb(255, 99, 132)",
+        "borderColor":"rgb(255, 99, 132)",
+        "data":"{chosenForecastString}",
+        "fill":"false"
+      },
+      {
+        "label":"{anotherForecastLabel}",
+        "fill":false,
+        "backgroundColor":"rgb(54, 162, 235)",
+        "borderColor":"rgb(54, 162, 235)",
+        "data":"{anotherForecastString}"
+      }
+    ]
+  },
+  "options":{
+    "title":{
+      "display":true,
+      "text":"{title}"
+    },
+    "scales":{
+      "yAxes":[
+        {
+          "ticks":{
+            "suggestedMin":0
+          },
+          "scaleLabel":{
+            "display":true,
+            "labelString":"Revenue"
+          }
+        }
+      ],
+      "xAxes":[
+        {
+          "scaleLabel":{
+            "display":true,
+            "labelString":"Month"
+          }
+        }
+      ]
+    }
+  }
+}
