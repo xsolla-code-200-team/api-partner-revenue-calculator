@@ -26,7 +26,6 @@
       <Content Update="Properties\Assets\ChartConfig.json">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <CopyToPublishDirectory>Never</CopyToPublishDirectory>
       </Content>
       <None Remove="Properties\Assets\Message.html" />
       <Content Include="Properties\Assets\Message.html">
