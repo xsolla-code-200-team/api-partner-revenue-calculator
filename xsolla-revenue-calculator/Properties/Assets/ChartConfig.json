@@ -5,16 +5,16 @@
     "datasets":[
       {
         "label":"{chosenForecastLabel}",
-        "backgroundColor":"rgb(255, 99, 132)",
-        "borderColor":"rgb(255, 99, 132)",
+        "backgroundColor":"rgb(0, 118, 255)",
+        "borderColor":"rgb(0, 118, 255)",
         "data":"{chosenForecastString}",
         "fill":"false"
       },
       {
         "label":"{anotherForecastLabel}",
         "fill":false,
-        "backgroundColor":"rgb(54, 162, 235)",
-        "borderColor":"rgb(54, 162, 235)",
+        "backgroundColor":"rgb(255, 0, 91)",
+        "borderColor":"rgb(255, 0, 91)",
         "data":"{anotherForecastString}"
       }
     ]
