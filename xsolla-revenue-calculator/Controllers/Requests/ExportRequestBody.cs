@@ -9,5 +9,9 @@ namespace xsolla_revenue_calculator.Controllers.Requests
         
         [JsonPropertyName("email")]
         public string Email { get; set; }
+        
+        
+        [JsonPropertyName("content")]
+        public string Content { get; set; }
     }
 }

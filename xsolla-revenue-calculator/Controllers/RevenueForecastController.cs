@@ -91,7 +91,7 @@ namespace xsolla_revenue_calculator.Controllers
         public async Task<IActionResult> ExportHtml([FromBody] ExportRequestBody requestBody)
         {
             await _exportService.ExportForecast(requestBody);
-            return Ok(requestBody);
+            return Ok();
         }
     }
 }
