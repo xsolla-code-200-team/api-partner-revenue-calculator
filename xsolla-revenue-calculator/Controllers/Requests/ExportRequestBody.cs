@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace xsolla_revenue_calculator.Controllers.Requests
@@ -11,7 +12,13 @@ namespace xsolla_revenue_calculator.Controllers.Requests
         public string Email { get; set; }
         
         
-        [JsonPropertyName("content")]
-        public string Content { get; set; }
+        [JsonPropertyName("revenue")]
+        public string Revenue { get; set; }
+        
+        [JsonPropertyName("monetization")]
+        public string Monetization { get; set; }
+            
+        [JsonPropertyName("topMarket")]
+        public string TopMarket { get; set; }
     }
 }

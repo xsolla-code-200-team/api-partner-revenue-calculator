@@ -30,7 +30,8 @@
       </Content>
       <None Remove="Properties\Assets\Message.html" />
       <Content Include="Properties\Assets\Message.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
       </Content>
     </ItemGroup>
     
